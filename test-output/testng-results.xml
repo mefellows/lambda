@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="17772" started-at="2011-10-15T23:48:09Z" finished-at="2011-10-15T23:48:27Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="17772" started-at="2011-10-15T23:48:09Z" finished-at="2011-10-15T23:48:27Z">
+      <class name="au.com.onegeek.lambda.TestFactoryTests">
+        <test-method status="PASS" signature="testClassCreation()[pri:0, instance:au.com.onegeek.lambda.TestFactoryTests@1264ab4d]" name="testClassCreation" duration-ms="17761" started-at="2011-10-15T23:48:09Z" finished-at="2011-10-15T23:48:27Z">
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>
