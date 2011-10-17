@@ -13,16 +13,15 @@ import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 import org.testng.annotations.DataProvider;
 
+import au.com.onegeek.lambda.core.exception.UnableToParseDataException;
 import au.com.onegeek.lambda.core.exception.UnableToParseTestsException;
 import au.com.onegeek.lambda.parser.Excel2SeleniumParser;
 import au.com.onegeek.lambda.tests.TestWebDriver;
 
 /**
- * This needs a better name - what if I want to create another custom input format?
+ * Front end for running the Lamba browser testing framework.
  * 
- * Anyway, it will do for now...
- * 
- * @author mfellows
+ * @author Matt Fellows <matt.fellows@onegeek.com.au>
  *
  */
 public class Lambda {
@@ -34,13 +33,12 @@ public class Lambda {
 	/**
 	 * Tests to be provided to the TestNG class.
 	 */
-	//protected Class<IDynamicTest>[] tests;
 	protected Class<Test>[] tests;
 	
 	/**
 	 * Data variable sets to test against.
 	 */
-	protected List <HashMap<String, String>> dataSet = new LinkedList<HashMap<String, String>>(); 
+	protected List<Map<String, Object>> dataSet = new LinkedList<Map<String, Object>>(); 
 	
 	/**
 	 * The TestNG class to bootstrap and run the actual tests.
@@ -56,10 +54,9 @@ public class Lambda {
 	 * A registry of parsers for reading input test cases.
 	 */
 	protected Map<String, ITestParser> parserRegistry;
-	
-	public static void main(String[] args) throws UnableToParseTestsException {
-		Lambda lambda = new Lambda();
-		
+
+	public static void main(String[] args) throws UnableToParseTestsException, UnableToParseDataException {
+		Lambda lambda = new Lambda();		
 		lambda.importPlugins();
 		lambda.importTests();
 		
@@ -80,32 +77,42 @@ public class Lambda {
 	
 	protected void importTests() {
 		// 
-	}
+	}	
 	
-	@DataProvider(name="dynamicDataProvider")
-	protected Object[][] getData() {
-		return null;
-	}
-	
-	public void run() throws UnableToParseTestsException {
+	public void run() throws UnableToParseTestsException, UnableToParseDataException {
+		
+		// Import General Configuration
+		
 		
 		// Import Plugins: Parsers, Reporting Engines, Connectors
 		//   - This should enable filtering on input files etc.
 		logger.info("Running Lambda");
 		
+		// Import TEST Configuration
+		
 		// Import Tests
 		
 		InputStream excelInputStream = null;
 		try {
+			//excelInputStream = new FileInputStream("/Users/mfellows/development/browser-tests/src/main/java/com/melbourneit/web/test/tests.xlsx");
 			excelInputStream = new FileInputStream("/Users/mfellows/development/browser-tests/src/main/java/com/melbourneit/web/test/tests.xlsx");
 		} catch(Exception e) {
+			e.printStackTrace();
 			// TODO: Handle exceptions
 		}
 		
 		// TODO: lookup input type and match parser against parser registry
-		ITestParser parser = new Excel2SeleniumParser();
-		tests = parser.parseTests(excelInputStream);
+		logger.info("Creating Dataset");
+		Excel2SeleniumParser dataParser = new Excel2SeleniumParser();
+		//IDataParser = ...		
+		this.dataSet = dataParser.parseDataSet(excelInputStream);
+		
+		// TODO: lookup input type and match parser against parser registry
 		logger.info("Creating Tests");		
+		ITestParser parser = dataParser;
+		this.tests = parser.parseTests(excelInputStream);
+		
+		logger.debug(String.valueOf(this.tests.length));
 		
 		// Set paths to reporting
 		
@@ -125,7 +132,20 @@ public class Lambda {
 		
 		// 
 	}
-	
-	
-	
+
+	public Class<Test>[] getTests() {
+		return tests;
+	}
+
+	public void setTests(Class<Test>[] tests) {
+		this.tests = tests;
+	}
+
+	public List<Map<String, Object>> getDataSet() {
+		return dataSet;
+	}
+
+	public void setDataSet(List<Map<String, Object>> dataSet) {
+		this.dataSet = dataSet;
+	}
 } 

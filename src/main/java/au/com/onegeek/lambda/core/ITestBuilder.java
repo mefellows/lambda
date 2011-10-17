@@ -43,13 +43,19 @@ import au.com.onegeek.lambda.core.exception.CannotModifyTestMethodException;
  */
 public interface ITestBuilder {
 
-	public ITestBuilder makeTest(String testClassName, List<Map<String, Object>> dataSet) throws CannotCreateTestClassException;
+	public ITestBuilder makeTestClass(String testClassName, List<Map<String, Object>> dataSet) throws CannotCreateTestClassException;
 	
 	public boolean addTestMethod(String testMethodName) throws CannotCreateTestMethodException;
+	
+	public boolean addTestMethod(String testMethodName, List<TestCommand> commands) throws CannotCreateTestMethodException;
 	
 	public boolean appendTestToLastMethod(TestCommand command) throws CannotModifyTestMethodException;
 	
 	public boolean appendTestToMethodByName(String methodName, TestCommand command) throws CannotModifyTestMethodException;
+
+	public boolean createTestMethodDataProvider();
+	
+	public boolean createTestMethodDataProviderByName(String methodName);
 	
 	public Class<Test> getCreatedClass() throws CannotCreateTestClassException;
 	

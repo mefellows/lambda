@@ -21,4 +21,8 @@ public class SeleniumAssertions extends Assert {
 		logger.debug("assertTextPresent: " + pattern);
 		assertTrue(selenium.isTextPresent(pattern));
 	}
+	public void assertTitle(String pattern) {
+		logger.debug("assertTitle: " + pattern);
+		assertTrue(selenium.getTitle().equals(pattern));
+	}
 }

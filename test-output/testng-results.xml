@@ -2,12 +2,57 @@
 <testng-results skipped="0" failed="0" total="1" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="17772" started-at="2011-10-15T23:48:09Z" finished-at="2011-10-15T23:48:27Z">
+  <suite name="Default suite" duration-ms="47507" started-at="2011-10-17T17:23:48Z" finished-at="2011-10-17T17:24:36Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="17772" started-at="2011-10-15T23:48:09Z" finished-at="2011-10-15T23:48:27Z">
-      <class name="au.com.onegeek.lambda.TestFactoryTests">
-        <test-method status="PASS" signature="testClassCreation()[pri:0, instance:au.com.onegeek.lambda.TestFactoryTests@1264ab4d]" name="testClassCreation" duration-ms="17761" started-at="2011-10-15T23:48:09Z" finished-at="2011-10-15T23:48:27Z">
+    <test name="Default test" duration-ms="47507" started-at="2011-10-17T17:23:48Z" finished-at="2011-10-17T17:24:36Z">
+      <class name="au.com.onegeek.lambda.tests.TestWebDriver">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:au.com.onegeek.lambda.tests.TestWebDriver@214a7a12]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="6" started-at="2011-10-17T17:23:48Z" finished-at="2011-10-17T17:23:49Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:au.com.onegeek.lambda.tests.TestWebDriver@214a7a12]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="9874" started-at="2011-10-17T17:23:49Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2011-10-17T17:23:58Z">
+        </test-method>
+        <test-method status="PASS" signature="startSelenium(java.lang.String, java.lang.String, java.lang.String)[pri:0, instance:au.com.onegeek.lambda.tests.TestWebDriver@214a7a12]" name="startSelenium" is-config="true" duration-ms="14408" started-at="2011-10-17T17:23:58Z" finished-at="2011-10-17T17:24:13Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[firefox]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[http://ote.retail.melbourneit.com.au/]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[sitecatalyst]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="runSpreadsheetTests()[pri:0, instance:au.com.onegeek.lambda.tests.TestWebDriver@214a7a12]" name="runSpreadsheetTests" duration-ms="22409" started-at="2011-10-17T17:24:13Z" finished-at="2011-10-17T17:24:35Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:au.com.onegeek.lambda.tests.TestWebDriver@214a7a12]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2011-10-17T17:24:13Z" finished-at="2011-10-17T17:24:13Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void au.com.onegeek.lambda.tests.TestWebDriver.runSpreadsheetTests() throws java.io.IOException]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:au.com.onegeek.lambda.tests.TestWebDriver@214a7a12]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2011-10-17T17:24:35Z" finished-at="2011-10-17T17:24:35Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void au.com.onegeek.lambda.tests.TestWebDriver.runSpreadsheetTests() throws java.io.IOException]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="shutdown()[pri:0, instance:au.com.onegeek.lambda.tests.TestWebDriver@214a7a12]" name="shutdown" is-config="true" duration-ms="799" started-at="2011-10-17T17:24:35Z" finished-at="2011-10-17T17:24:36Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:au.com.onegeek.lambda.tests.TestWebDriver@214a7a12]" name="springTestContextAfterTestClass" is-config="true" duration-ms="0" started-at="2011-10-17T17:24:36Z" finished-at="2011-10-17T17:24:36Z">
         </test-method>
       </class>
     </test>

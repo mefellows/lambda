@@ -17,6 +17,11 @@ public class TestCommand {
 		this.command = command;
 		this.parameters = parameters;
 	}
+	
+	public TestCommand(String command) {
+		this.command = command;
+		this.parameters = new Object[0];
+	}
 
 	public String getCommand() {
 		return command;
@@ -32,5 +37,18 @@ public class TestCommand {
 
 	public void setParameters(Object[] parameters) {
 		this.parameters = parameters;
+	}
+	
+	public void addParameter(Object param) {
+		Object[] newParams = new Object[this.parameters.length + 1];
+		
+		int i = 0;
+		for (Object obj : this.parameters) {
+			newParams[i] = obj;
+			i++;
+		}
+		
+		newParams[i] = param;
+		this.parameters = newParams;
 	}
 }

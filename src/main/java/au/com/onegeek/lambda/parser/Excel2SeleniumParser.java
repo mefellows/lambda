@@ -1,5 +1,6 @@
 package au.com.onegeek.lambda.parser;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -9,7 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javassist.CannotCompileException;
 import javassist.CtClass;
+import javassist.NotFoundException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,43 +24,26 @@ import org.slf4j.LoggerFactory;
 
 import au.com.onegeek.lambda.core.IDataParser;
 import au.com.onegeek.lambda.core.ITestParser;
+import au.com.onegeek.lambda.core.JavassistTestBuilderImpl;
 import au.com.onegeek.lambda.core.Test;
 import au.com.onegeek.lambda.core.TestCommand;
-import au.com.onegeek.lambda.core.TestBuilder;
 import au.com.onegeek.lambda.core.exception.UnableToParseDataException;
 import au.com.onegeek.lambda.core.exception.UnableToParseTestsException;
-import au.com.onegeek.lambda.framework.selenium.analytics.Analytics;
-import au.com.onegeek.lambda.tests.SeleniumAssertions;
 import au.com.onegeek.lambda.tests.TestXslxData;
-
 import com.thoughtworks.selenium.Selenium;
 
 public class Excel2SeleniumParser implements ITestParser, IDataParser {
 	private static final Logger logger = LoggerFactory.getLogger(Excel2SeleniumParser.class);
 	
 	/**
-	 * The Analytics implementation specific to the site being tested.
-	 */
-	//@Autowired 
-	private Analytics analytics;
-	
-	//@Autowired
-	private SeleniumAssertions assertions;
-	
-	/**
 	 * Data set.
 	 */
-	protected List <Map<String, Object>> dataMap;
+	protected List<Map<String, Object>> dataMap;
 	
 	/**
 	 * Tests parsed from Excel spreadsheet.
 	 */
 	protected List<Test> tests;
-	
-	public Excel2SeleniumParser() {
-		this.dataMap = new ArrayList<HashMap<String, Object>>();
-		this.tests = new ArrayList<Test>();
-	}
 	
 	/**
 	 * Selenium object.
@@ -65,15 +51,21 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 	 */
 	protected Selenium selenium;
 	
-	private void parse(InputStream stream) {
+	private void parse(InputStream stream) throws CannotCompileException, NotFoundException {
+		
+		logger.debug("Parsing...");
 		
 		if (this.dataMap != null && this.tests != null) {
 			return;
 		}
+		
+		this.dataMap = new ArrayList<Map<String, Object>>();
+		this.tests = new ArrayList<Test>();		
         
         Workbook workbook = null;
 		try {
-			workbook = new XSSFWorkbook(stream);
+			// TODO: why doesn't input stream work?
+			workbook = new XSSFWorkbook(new FileInputStream("/Users/mfellows/Desktop/tests.xlsx"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -108,15 +100,7 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
         	}
         }
         
-        // Temporary Test Class creation objects
-        List<String> testClassNames = new ArrayList<String>();
-        Map<String, List<String>> classToMethodMap = new HashMap<String, List<String>>();
-        Map<String, List<TestCommand>> methodToTestCommandMap = new HashMap<String, List<TestCommand>>();
-        String currentTestClassName = "";
-        
-        
-        
-        TestBuilder builder = new TestBuilder();
+        JavassistTestBuilderImpl builder = JavassistTestBuilderImpl.getInstance();
         
         // Parse Test sheets into Test objects
         for (int s = 0; s < workbook.getNumberOfSheets(); s++) {
@@ -124,7 +108,7 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 	        int i = 0;
 
 	        // Ignore data sheets
-	        if (!sheet.getSheetName().startsWith("data")) {
+	        if (sheet.getSheetName().startsWith("suite")) {
 	        
 	        	int maxRows = sheet.getPhysicalNumberOfRows();
 	        	int currentRow = sheet.getFirstRowNum();
@@ -138,16 +122,12 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 		        	
 		        	// Test Class
 		        	Test testClass = null;
-		        	CtClass testClassClass = null;
-		        	Object testClass2 = null;
 		        	
 		        	// Check for empty row
 		        	if (row != null && row.getPhysicalNumberOfCells() != 0) {
 		        		i++;
-		
-		        		String command = null;
-		        		Object[] args = new Object[3];
-		        		int j = 0;
+
+		        		TestCommand command = null;
 		        		
 				        // Get Cells
 		        		Iterator<Cell> iterator = row.cellIterator();
@@ -157,30 +137,24 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 					        String cellValue = TestXslxData.objectFrom(workbook, cell).toString();		        	
 					        
 					        if (cellValue.startsWith("test")) {
-				        		logger.debug("Test case found: " + cellValue);
-				        		
-				        		
-				        		// Complete Creation of PREVIOUS test case
-				        		
-				        		
-				        		// Create new Test class
+				        		logger.debug("Test case found: " + cellValue + ". Creating Test Case");
 
-				        		
+				        		// Create new Test class
+				        		builder.makeTestClass(cellValue, this.dataMap);
+
 				        		break;
-				        		// TODO: create test case...
-				        		
 				        	} else {
 				        		if (command == null) {
-				        			logger.debug("Command found: " + cellValue); 
-				        			command = cellValue;
+				        			logger.debug("Command found: " + cellValue + ". Creating new TestCommand"); 
+				        			command = new TestCommand(cellValue);
 				        		} else {
 				        			logger.debug("Command argument found: " + cellValue);
-				        			args[j] = cellValue;
-				        			j++;
+				        			command.addParameter(cellValue);
 				        		}
 				        	}
 				        }
 		        	}
+		        	this.tests.add(testClass);
 				    currentRow++;
 		        }
 	        }
@@ -194,13 +168,29 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 	
 	@Override
 	public Class<Test>[] parseTests(InputStream stream) throws UnableToParseTestsException {
-		this.parse(stream);		
+		try {
+			this.parse(stream);
+		} catch (CannotCompileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
         return this.tests.toArray(new Class[this.tests.size()]);
 	}
 
 	@Override
 	public List <Map<String, Object>> parseDataSet(InputStream stream) throws UnableToParseDataException {
-		this.parse(stream);
+		try {
+			this.parse(stream);
+		} catch (CannotCompileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return this.dataMap;
 	}
 }

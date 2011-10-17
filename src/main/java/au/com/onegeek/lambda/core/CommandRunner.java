@@ -54,7 +54,7 @@ public class CommandRunner {
 		try {
 			logger.debug("Creating firefox Driver.");
 			this.driver = TestWebDriver.getDriver("firefox");
-			driver.get("http://retail.stage.mit/");
+			driver.get("http://www.google.com.au");
 		} catch (Exception e) {
 			logger.debug("Could not create driver because of: "
 					+ e.getMessage() + "\n Exiting now...");
@@ -63,8 +63,8 @@ public class CommandRunner {
 		
 		// Start the Selenium Server
 		try {
-			this.selenium = new WebDriverBackedSelenium(this.driver, "http://retail.stage.mit/");
-			this.selenium.open("http://retail.stage.mit/");
+			this.selenium = new WebDriverBackedSelenium(this.driver, "http://www.google.com.au");
+			this.selenium.open("http://www.google.com.au/");
 		} catch (Exception e) {
 			logger.debug("Could not start selenium or the server because: " + e.getMessage());
 			System.exit(1);
@@ -72,7 +72,7 @@ public class CommandRunner {
 		
 		assertionProviders = new ArrayList<Object>();
 		assertionProviders.add(selenium);
-		assertionProviders.add(new SeleniumAssertions(selenium));
+		assertionProviders.add(new SeleniumAssertions(selenium));		
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class CommandRunner {
 		String keyword = testCommand.getCommand();
 		        
         // Create Test Case w\
-		Object caller = null;
+		Object object = null;
         Method method = null;
         
     	// Determine argument types
@@ -97,31 +97,35 @@ public class CommandRunner {
     	}
 
         // Find the implementing class of the method
-    	for(Object obj : assertionProviders) {
+    	for(Object provider : assertionProviders) {
 	    	try {
-	    		method = obj.getClass().getMethod(keyword, argTypes);
-	    		caller = obj;
+	    		method = provider.getClass().getMethod(keyword, argTypes);
+	    		object = provider;
 	        } catch (SecurityException e) {
-	        	logger.debug("Not allowed to call method " + keyword + " from Provider <" + obj.getClass().getName() + "> ");
+	        	logger.debug("Not allowed to call method " + keyword + " from Provider <" + provider.getClass().getName() + "> ");
 	        } catch (NoSuchMethodException e) {
-	        	logger.debug("Method: " + keyword + " not found in Provider <" + obj.getClass().getName() + "> ");
+	        	logger.debug("Method: " + keyword + " not found in Provider <" + provider.getClass().getName() + "> ");
 	        }
     	}
     	
-    	if (caller == null) {
-    		fail("Cannot find a provider of method: '" + keyword + "'");    		
+    	if (object == null) {
+    		fail("Cannot find a provider of method: '" + keyword + "'");
+    	} else {
+    		logger.debug("Found source object for method, object: <" + object.toString() + ">");
     	}
 	    	
     	// Invoke method
         Object result = "not set";
         try {
-        	result = method.invoke(caller, testCommand.getParameters());
+        	result = method.invoke(object, testCommand.getParameters());
         } catch (IllegalArgumentException e) {
         	fail("Method '" + keyword + "' illegal argument exception: " + e.getMessage());
         } catch (IllegalAccessException e) {
         	fail("Method '" + keyword + "' illegal acess exception: " + e.getMessage());
         } catch (InvocationTargetException e) {
-        	fail("Method '" + keyword + "' InvocationTarget exception: " + e.getMessage());
+        	// This is usually a failed Assertion from an AssertionProvider
+        	e.printStackTrace();
+        	//fail("Method '" + keyword + "' InvocationTarget exception: " + e.getMessage());        	
         } catch (AssertionError e) {
         	logger.error("Assertion fail: " + e.getMessage());
         }
@@ -139,6 +143,7 @@ public class CommandRunner {
 			return _instance;
 		}
 		
-		return new CommandRunner();
+		_instance = new CommandRunner();
+		return _instance;
 	}
 }
