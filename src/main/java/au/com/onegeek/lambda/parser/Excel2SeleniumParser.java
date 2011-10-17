@@ -27,6 +27,7 @@ import au.com.onegeek.lambda.core.ITestParser;
 import au.com.onegeek.lambda.core.JavassistTestBuilderImpl;
 import au.com.onegeek.lambda.core.Test;
 import au.com.onegeek.lambda.core.TestCommand;
+import au.com.onegeek.lambda.core.exception.CannotCreateTestClassException;
 import au.com.onegeek.lambda.core.exception.UnableToParseDataException;
 import au.com.onegeek.lambda.core.exception.UnableToParseTestsException;
 import au.com.onegeek.lambda.tests.TestXslxData;
@@ -51,7 +52,7 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 	 */
 	protected Selenium selenium;
 	
-	private void parse(InputStream stream) throws CannotCompileException, NotFoundException {
+	private void parse(InputStream stream) throws CannotCompileException, NotFoundException, CannotCreateTestClassException {
 		
 		logger.debug("Parsing...");
 		
@@ -176,7 +177,9 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		} catch (CannotCreateTestClassException e) {
+			e.printStackTrace();			
+		}	
         return this.tests.toArray(new Class[this.tests.size()]);
 	}
 
@@ -190,6 +193,8 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (CannotCreateTestClassException e) {
+			e.printStackTrace();			
 		}
 		return this.dataMap;
 	}
