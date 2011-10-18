@@ -1,0 +1,26 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Retail Development Browser Testing Suite - Matt Fellows" parallel="false">
+
+    <!-- Selenium SERVER details and defaults -->
+    <parameter name="selenium.host"  value="localhost"/>
+    <parameter name="selenium.port"  value="4444"/>
+    <parameter name="selenium.browser"  value="firefox"/>
+<!--     <parameter name="selenium.browser"  value=""/> -->
+    
+    <!-- Environment defaults -->
+    <parameter name="environment.url"  value="http://ote.retail.melbourneit.com.au/"/>
+    <parameter name="environment.prefix"  value="matthewfellows"/>
+    <parameter name="environment.email"  value="matt.fellows@melbourneit.com.au"/>
+    
+    <!-- 
+     | Site Analytics implementation.
+     | Currently only supports SiteCatalyst ("sitecatalyst"), but is intended
+     | to support Google \ Other analytics providers as required.
+     -->   
+    <parameter name="environment.analytics"  value="sitecatalyst"/>
+
+    <!-- Include the main testing suite file containing all tests -->
+    <suite-files>
+        <suite-file path="src/main/java/com/melbourneit/web/test/retail/suite.xml"></suite-file>
+    </suite-files>   
+</suite>

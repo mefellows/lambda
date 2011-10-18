@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="5" configfailurepolicy="skip" verbose="1" name="Failed suite [Command line suite]" skipfailedinvocationcounts="false" annotations="JDK" data-provider-thread-count="10">
+  <test verbose="1" name="Command line test(failed)" junit="false" annotations="JDK">
+    <classes>
+      <class name="TestSuitedemo1">
+        <methods>
+          <include name="testRetailHomepage"/>
+        </methods>
+      </class>
+    </classes>
+  </test>
+</suite>

@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>au.com.onegeek</groupId>
+    <artifactId>lambda</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Lamba</name>
+    <description>Lambda - Web Automated Browser tests using Selenium and WebDriver</description>
+    <packaging>pom</packaging>
+
+    <contributors>
+        <contributor>
+            <name>Matt Fellows</name>
+            <organization>OneGeek</organization>
+            <organizationUrl>http://www.onegeek.com.au</organizationUrl>
+            <email>matt.fellows@onegeek.com.au</email>
+        </contributor>
+    </contributors>
+    
+    <modules>
+        <module>../lambda-core</module>
+        <module>../lambda-cli</module> <!-- How to embed\insert Clamshell into here? -->
+        <module>../lambda-splash</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>com.springsource.repository.bundles.release</id>
+            <name>SpringSource EBR - SpringSource Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <name>SpringSource EBR - External Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>onegeek</id>
+            <name>OneGeek Maven Repository</name>
+            <url>http://repo.onegeek.com.au</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>onegeek</id>
+            <name>OneGeek Maven Repository</name>
+            <url>scp://onegeek.com.au/home/onegeekd/www/repo.onegeek.com.au</url>
+        </repository>
+    </distributionManagement>
+</project>
