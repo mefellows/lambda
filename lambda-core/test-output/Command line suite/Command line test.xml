@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Command line test" failures="0" tests="2" time="0.428" errors="0">
-  <properties/>
-  <testcase name="testTheGoogle" time="0.204" classname="au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests"/>
-  <testcase name="testTheGoogle" time="0.222" classname="au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests"/>
-</testsuite>
