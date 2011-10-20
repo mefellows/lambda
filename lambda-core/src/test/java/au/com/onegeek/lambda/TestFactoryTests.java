@@ -16,7 +16,7 @@ import au.com.onegeek.lambda.core.TestCommand;
 
 public class TestFactoryTests {
 	private static final Logger logger = LoggerFactory.getLogger(TestFactoryTests.class);
-//	@Test
+	@Test
 	public void testClassCreation() throws Exception {
 		List<Map<String, Object>> dataSet = new LinkedList<Map<String, Object>>();
 		
@@ -44,6 +44,7 @@ public class TestFactoryTests {
 
 		f.addTest("testTheGoogle");
 		f.appendTestToLastMethod(new TestCommand("getBodyText"));
+		f.appendTestToLastMethod(new TestCommand("wait", new Double(10.00)));
 		f.appendTestToLastMethod(new TestCommand("assertTitle", "$foobar"));
 		f.appendTestToLastMethod(new TestCommand("assertTitle", "$foobar5"));
 		f.addDataProvider();

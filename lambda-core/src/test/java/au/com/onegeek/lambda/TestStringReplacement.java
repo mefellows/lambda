@@ -1,7 +1,9 @@
 package au.com.onegeek.lambda;
 
 import java.lang.reflect.Method;
+import java.text.NumberFormat;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,7 @@ import javassist.CtNewMethod;
 import javassist.CtField.Initializer;
 import javassist.NotFoundException;
 
+import au.com.onegeek.lambda.core.TestCommand;
 import au.com.onegeek.lambda.core.exception.VariableNotFoundException;
 
 public class TestStringReplacement {
@@ -28,6 +31,23 @@ public class TestStringReplacement {
 	 * @throws InstantiationException 
 	 */
 	public static void main(String[] args) throws NotFoundException, CannotCompileException, InstantiationException, IllegalAccessException, Exception {
+		
+		TestCommand command = new TestCommand("keward", "10", "bar");
+		TestCommand command2 = new TestCommand("wait", 10);
+		
+		NumberFormat format = NumberFormat.getInstance(Locale.ENGLISH);
+		Number number = format.parse((String)command.getParameters()[0]);
+		command2.getParameters()[0] = "something";
+		command2.getParameters()[0] = new Double(10);
+		
+		long foo = 10L;
+		System.out.println(java.lang.Double.class.getSimpleName());
+
+		
+		System.out.println(command2.getParameters()[0]);
+		//System.out.println(command2.getParameters()[1]);
+		
+		/*
 		ClassPool _classPool = ClassPool.getDefault();		
 		_classPool.importPackage("org.testng");
 		_classPool.importPackage("org.testng.annotations");

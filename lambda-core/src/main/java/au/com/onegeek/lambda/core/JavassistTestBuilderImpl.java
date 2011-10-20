@@ -118,6 +118,8 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 		
 		// Create the class container to add methods to
 		this.ctClass = classPool.makeClass(testClassName);
+		this.ctClass.stopPruning(true);
+
 		try {
 			this.ctClass.setSuperclass(this.classPool.get("au.com.onegeek.lambda.core.Test"));			
 		} catch (CannotCompileException e) {
@@ -166,7 +168,8 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 		CtMethod testMethod = CtNewMethod.make(
 				"public void " + testMethodName + " () { " +
 						"logger.debug(\"about to show args\");" +
-						"for (int i=0; i<$args.length; i++) {logger.debug(\"Method param value: \" + $args[i]);}" + 
+						"for (int i=0; i<$args.length; i++) {" +
+						"logger.debug(\"Method param value: \" + $args[i]);}" + 
 						"logger.debug(\"Running dynamic TestCase: " + testMethodName + "\");" +
 						"}",
 				this.ctClass);
@@ -191,7 +194,7 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 
 		// Add command to Test class
 		String commandString = this.implodeCommandString(command);
-		logger.debug("Adding command to method with body: \n" + commandString);
+		logger.debug("Adding command to method with body: {}", commandString);
 		this.ctMethod.insertAfter(commandString);
 	}
 	
@@ -227,9 +230,9 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 		        if (m.groupCount() > 0) {
 			        while (m.find()) {
 		        		String match = m.group();
-		        		logger.debug("variable reference found from string '" + param + "': " + match.substring(1) + ", adding to map of vars to add?");
+		        		logger.debug("variable reference found from string '{}': {}, adding to map of vars to add?", param, match.substring(1));
 		        		if (this.methodVariableToParameterMap.get(match) != null) {
-		        			logger.debug("Variable'" + match + "' exists in map, ignoring...");
+		        			logger.debug("Variable'{}' exists in map, ignoring...", match);
 		        		} else {
 		        			// Determine parameter type from a provided data set		        			
 		        			@SuppressWarnings("rawtypes")
@@ -476,8 +479,10 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 	private String implodeCommandString(TestCommand command) throws VariableNotFoundException {
 		String returnString = "";
 		
+		// Check type of parameter, Strings could also be longs, ints, decimals etc.
+		
 		if (command.getParameters().length > 0) {
-			returnString += "executeCommand(\"" + command.getCommand() + "\", new String[]{";
+			returnString += "executeCommand(\"" + command.getCommand() + "\", new Object[]{";
 		} else {
 			// No arguments? Piece of cake.
 			return "executeCommand(\"" + command.getCommand() + "\");\n";			
@@ -522,6 +527,9 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 		} catch (CannotCompileException e) {
 			e.printStackTrace();
 			throw new CannotCreateTestClassException("Cannot compile test class using Jassist. Embedded exception: " + e.getMessage());
+		} finally {
+			// Allow class re-creation later on (i.e. if tests are run again)
+			ctClass.defrost();
 		}
 	}
 	

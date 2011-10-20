@@ -26,9 +26,10 @@ import com.beust.jcommander.internal.Lists;
  *
  */
 public class LambdaCmd implements Command {
-	private static final String ACTION_NAME = "lambda";
+	private static final String ACTION_NAME = "test";
 	private static final String APPLICATION_NAME = "Clambda Shell (Surface Tension)";
 	private LambdaDescriptor descriptor;
+	private Lambda lambda;	
 
 	private class LambdaParams {
 		@Parameter
@@ -41,7 +42,7 @@ public class LambdaCmd implements Command {
 		public String dataSet;
 
 		@Parameter(names = { "-e", "--environment" }, arity = 1, required = true, description = "Specifies the hostname for which to run the tests against.")
-		public List<String> environment;
+		public String environment;
 
 		@Parameter(names = {"-b", "--browser" }, required = false, description = "Specifies the browsers for which to run the tests against. This parameter can be used multiple times. e.g. -b firefox -b ie7 -b chrome. Defaults to 'firefox'")
 		public List<String> browsers;
@@ -66,7 +67,12 @@ public class LambdaCmd implements Command {
 		public String getUsage() {
 			StringBuilder result = new StringBuilder();
 			result.append(Configurator.VALUE_LINE_SEP)
-					.append("\tlambda [options]")
+					.append("\ttest [options]")
+					.append(Configurator.VALUE_LINE_SEP)
+					.append(Configurator.VALUE_LINE_SEP)
+					.append("\t\tExample: test -f /Users/mfellows/Desktop/aes.xlsx -b firefox -e http://aes.matt.mit")
+					.append(Configurator.VALUE_LINE_SEP)
+					.append("\t\tExample: test @/Users/mfellows/Desktop/aes.txt")
 					.append(Configurator.VALUE_LINE_SEP);
 
 			for (Map.Entry<String, String> entry : getArgsDescription().entrySet()) {
@@ -101,9 +107,9 @@ public class LambdaCmd implements Command {
 		String[] args = (String[]) ctx.getValue(Context.KEY_COMMAND_LINE_ARGS);		
 		IOConsole c = ctx.getIoConsole();
 		
-		for (String arg : args) {
-			c.writeOutput("Key provided: " + arg + "\n");
-		}
+		
+		//Lambda lambda = Lambda.getInstance();
+		
 		
 		if (args != null) {
 			try {
@@ -114,44 +120,53 @@ public class LambdaCmd implements Command {
 				return null;
 			}
 
-			// decipher args
+			if (descriptor != null) {
+				// Extract environment
+				if (descriptor.parameters.environment != null) {
+					lambda.setHostname(descriptor.parameters.environment);
+				}				
 
-			// >sysinfo -props
-			//if (descriptor != null && descriptor.parameters.browsers != null && descriptor.parameters.browsers.length != 0) {
-			if (descriptor != null && descriptor.parameters.browsers != null) {
-				for (String browser : descriptor.parameters.browsers) {
-					c.writeOutput(String.format("%nBrowser specified: " + browser));					
+				// Set test case
+				if (descriptor.parameters.file != null) {
+					lambda.setTestSuiteFilename(descriptor.parameters.file);
 				}
 				
-			}
-
+				// Set test data
+				if (descriptor.parameters.dataSet != null) {
+					lambda.setDataSetFilename(descriptor.parameters.dataSet);
+				}
+				
+				// Determine browser to use
+				if (descriptor.parameters.browsers != null) {
+					for (String browser : descriptor.parameters.browsers) {
+						c.writeOutput(String.format("%nSetting up Lambda Environment: Browser added: " + browser + "\n"));
+						lambda.setBrowser(browser);
+					}
+				}
+				
+				// Run Lambda with set params
+				try {
+					lambda.run();
+				} catch (UnableToParseTestsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnableToParseDataException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
+		} else {
+			c.writeOutput("Invalid input: \n");
+			c.writeOutput(this.getDescriptor().getUsage());
 		}
 
 		return null;
-/*
-		IOConsole console = ctx.getIoConsole();
-		// console.writeOutput(ctx.getValue("foo"));
-		console.writeOutput(String.format("%n%s%n%n", new Date().toString()));
-
-		String filename = "";
-
-		Lambda lambda = new Lambda();
-		try {
-			lambda.runWithParams(filename);
-		} catch (UnableToParseTestsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnableToParseDataException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-		*/
 	}
 
 	@Override
 	public void plug(Context plug) {
 		descriptor = new LambdaDescriptor();
+		this.lambda = Lambda.getInstance();
 	}
 
 	@Override

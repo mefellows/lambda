@@ -3,21 +3,30 @@ package au.com.onegeek.lambda.core;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverBackedSelenium;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 
 import au.com.onegeek.lambda.core.exception.UnableToParseDataException;
 import au.com.onegeek.lambda.core.exception.UnableToParseTestsException;
 import au.com.onegeek.lambda.parser.Excel2SeleniumParser;
+import au.com.onegeek.lambda.tests.SeleniumAssertions;
+import au.com.onegeek.lambda.tests.TestWebDriver;
 
 /**
  * Front end for running the Lamba browser testing framework.
+ * 
+ * TODO: Across entire project check for optimal use of logging statements (i.e. logger.debug("this is a {}", string); as described
+ *       here: http://logback.qos.ch/manual/architecture.html )
  * 
  * @author Matt Fellows <matt.fellows@onegeek.com.au>
  *
@@ -37,7 +46,7 @@ public class Lambda {
 	/**
 	 * Data variable sets to test against.
 	 */
-	protected List<Map<String, Object>> dataSet = new LinkedList<Map<String, Object>>(); 
+	protected List<Map<String, Object>> dataSet; 
 	
 	/**
 	 * The TestNG class to bootstrap and run the actual tests.
@@ -58,6 +67,18 @@ public class Lambda {
 	
 	private String dataSetFilename;
 	
+	private String browser;
+	
+	private String hostname;
+	
+	//@Autowired
+	private WebDriver driver;
+
+	//@Autowired
+	private WebDriverBackedSelenium selenium;
+	
+	private static Lambda instance;
+	
 	/**
 	 * Configuration identity.
 	 * 
@@ -67,8 +88,19 @@ public class Lambda {
 	 */
 	//private Configuration configuration;
 
+	private Lambda() {
+		
+	}
+	
+	public static Lambda getInstance() {
+		if (instance == null) {
+			instance = new Lambda();
+		}
+		return instance;
+	}
+	
 	public static void main(String[] args) throws UnableToParseTestsException, UnableToParseDataException {
-		Lambda lambda = new Lambda();			
+		Lambda lambda = Lambda.getInstance();		
 		lambda.run();
 	}
 	
@@ -102,10 +134,7 @@ public class Lambda {
 		
 		this.importPlugins();
 		this.importTests();
-		
-		System.out.println("java.class.path" + System.getProperty("java.class.path"));
-		
-		
+
 		// Import General Configuration
 		
 		
@@ -122,55 +151,83 @@ public class Lambda {
 		InputStream dataSetInputStream = null;
 		
 		// TODO: lookup input type and match parser against parser registry
-		logger.info("Creating Dataset");
-		try {
-			if (this.testSuiteFilename == null) {
-				this.testSuiteFilename = "/Users/mfellows/development/lambda/src/main/java/au/com/onegeek/lambda/tests/tests-aes.xlsx";
-			}
-			testSuiteInputStream = new FileInputStream(this.testSuiteFilename);
-		} catch(Exception e) {
-			e.printStackTrace();
-			// TODO: Handle exceptions
-		}		
 		Excel2SeleniumParser dataParser = new Excel2SeleniumParser();
-		//IDataParser = ...		
-		this.dataSet = dataParser.parseDataSet(testSuiteInputStream);
-		
-		
-		// TODO: lookup input type and match parser against parser registry
-		logger.info("Creating Tests");
-		if (this.dataSetFilename != null) {
+		if ( this.dataSet == null) {
+			logger.info("Creating Dataset");
 			try {
-				dataSetInputStream = new FileInputStream(this.dataSetFilename);
+				if (this.testSuiteFilename == null) {
+					this.testSuiteFilename = "/Users/mfellows/development/lambda/lambda-core/src/main/java/au/com/onegeek/lambda/tests/tests-aes.xlsx";
+				}			
+				testSuiteInputStream = new FileInputStream(this.testSuiteFilename);
 			} catch(Exception e) {
 				e.printStackTrace();
 				// TODO: Handle exceptions
+			}		
+			//IDataParser = ...		
+			this.dataSet = dataParser.parseDataSet(testSuiteInputStream);
+		}
+		
+		
+		// TODO: lookup input type and match parser against parser registry
+		if (this.tests == null) {
+			logger.info("Creating Tests");
+			if (this.dataSetFilename != null) {
+				try {
+					dataSetInputStream = new FileInputStream(this.dataSetFilename);
+				} catch(Exception e) {
+					e.printStackTrace();
+					// TODO: Handle exceptions
+				}
+			} else {
+				// Use the same filename as for the test cases
+				dataSetInputStream = testSuiteInputStream;
 			}
-		} else {
-			// Use the same filename as for the test cases
-			dataSetInputStream = testSuiteInputStream;
+			ITestParser parser = dataParser;
+			this.tests = parser.parseTests(dataSetInputStream);
 		}
-		ITestParser parser = dataParser;
-		this.tests = parser.parseTests(dataSetInputStream);
-		
-		logger.debug(String.valueOf(this.tests.length));
-		for(Class<Test> t : this.tests) {
-			System.out.println(t);
-		}
-		
 		// Set paths to reporting
 		
+		// Startup Selenium etc.
+		
+		// Create the browser driver
+		try {
+			logger.debug("Creating " + browser + " Driver.");
+			this.driver = TestWebDriver.getDriver(this.browser);
+			driver.get(this.hostname);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug("Could not create driver for browser '" + browser + "' because of: " + e.getMessage() + "\n Exiting now...");
+			System.exit(1);
+		}
+		
+		// Start the Selenium Server
+		try {
+			this.selenium = new WebDriverBackedSelenium(this.driver, this.hostname);
+			this.selenium.open("/");
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug("Could not start selenium or the server because: " + e.getMessage());
+			System.exit(1);
+		}
+		
 		// Create TestNG objects
-		logger.info("Creating TestNG Instance");
+		logger.info("Starting TestNG Instance");
 		this.testng = new TestNG();
 		TestListenerAdapter tla = new TestListenerAdapter();
-		testng.setTestClasses(tests);
+		testng.setTestClasses(this.tests);
 		testng.addListener(tla);
 				
 		// Run the TestNG suite
 		logger.info("Running Tests");
 		testng.run();
-		
+
+		// Close down browsers etc.
+	    selenium.stop();
+	    driver.quit();
+	    selenium = null;
+	    driver = null;
+	    
+	    // Timer has already been stopped issue.. Consider running this in own Thread?
 		
 		// Produce Reports
 		
@@ -191,5 +248,53 @@ public class Lambda {
 
 	public void setDataSet(List<Map<String, Object>> dataSet) {
 		this.dataSet = dataSet;
+	}
+
+	public String getTestSuiteFilename() {
+		return testSuiteFilename;
+	}
+
+	public void setTestSuiteFilename(String testSuiteFilename) {
+		this.testSuiteFilename = testSuiteFilename;
+	}
+
+	public String getDataSetFilename() {
+		return dataSetFilename;
+	}
+
+	public void setDataSetFilename(String dataSetFilename) {
+		this.dataSetFilename = dataSetFilename;
+	}
+
+	public String getBrowser() {
+		return browser;
+	}
+
+	public void setBrowser(String browser) {
+		this.browser = browser;
+	}
+
+	public String getHostname() {
+		return hostname;
+	}
+
+	public void setHostname(String hostname) {
+		this.hostname = hostname;
+	}
+
+	public WebDriver getDriver() {
+		return driver;
+	}
+
+	public void setDriver(WebDriver driver) {
+		this.driver = driver;
+	}
+
+	public WebDriverBackedSelenium getSelenium() {
+		return selenium;
+	}
+
+	public void setSelenium(WebDriverBackedSelenium selenium) {
+		this.selenium = selenium;
 	}
 } 

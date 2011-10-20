@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import au.com.onegeek.lambda.tests.SeleniumAssertions;
 import au.com.onegeek.lambda.tests.TestWebDriver;
@@ -43,38 +44,20 @@ public class CommandRunner {
 	 */
 	protected List<Object> assertionProviders;
 
+	//@Autowired
 	private WebDriver driver;
 
+	//@Autowired
 	private WebDriverBackedSelenium selenium;
 	
 	
 	private CommandRunner() {
-		// Create the browser driver
 		
-		try {
-			logger.debug("Creating firefox Driver.");
-			this.driver = TestWebDriver.getDriver("firefox");
-			driver.get("http://aes.matt.mit");
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.debug("Could not create driver because of: "
-					+ e.getMessage() + "\n Exiting now...");
-			System.exit(1);
-		}
-		
-		// Start the Selenium Server
-		try {
-			this.selenium = new WebDriverBackedSelenium(this.driver, "http://aes.matt.mit");
-			this.selenium.open("http://aes.matt.mit/");
-		} catch (Exception e) {
-			logger.debug("Could not start selenium or the server because: " + e.getMessage());
-			System.exit(1);
-		}
-		
+		this.driver = Lambda.getInstance().getDriver();
+		this.selenium = Lambda.getInstance().getSelenium();
 		assertionProviders = new ArrayList<Object>();
 		assertionProviders.add(selenium);
 		assertionProviders.add(new SeleniumAssertions(selenium));	
-		
 	}
 	
 	/**
@@ -84,6 +67,7 @@ public class CommandRunner {
 	 */
 	public void runCommand(TestCommand testCommand) {
 		String keyword = testCommand.getCommand();
+		logger.debug("Looking for method with name: " + testCommand.getCommand());
 		        
         // Create Test Case w\
 		Object object = null;
@@ -93,8 +77,40 @@ public class CommandRunner {
     	Class[] argTypes = new Class[testCommand.getParameters().length];    	
     	int k = 0;
     	for (k = 0; k < testCommand.getParameters().length; k++) {
-    		argTypes[k] = String[].class;
-    		argTypes[k] = testCommand.getParameters()[k].getClass();
+
+    		// Check if there is a number hidden in the args list
+    		// Currently, although most of the Lambda implementation supports Object params
+    		// The conversion into a class (JavassistTestBuilderImpl) turns them back into 
+    		// Strings. 
+    		
+    		// TODO: set locale?
+           /* NumberFormat format = NumberFormat.getInstance(Locale.ENGLISH);
+            Number number;
+            try {
+				number = format.parse((String) testCommand.getParameters()[k]);
+				testCommand.getParameters()[k] = number;
+				
+				// Looks like it ALWAYS comes out of here as long
+				// Apache commons to the rescue? Surely there is a library that does this better
+				// TODO: fix this
+				if (number.getClass().getSimpleName().equalsIgnoreCase("long")) {
+					argTypes[k] = long.class;					
+				}
+				else if (number.getClass().getSimpleName().equalsIgnoreCase("double")) {
+					argTypes[k] = double.class;					
+				}
+				else if (number.getClass().getSimpleName().equalsIgnoreCase("float")) {
+					argTypes[k] = float.class;					
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}*/
+    		
+//    		if (argTypes[k] == null) {
+    			argTypes[k] = testCommand.getParameters()[k].getClass();
+//    		}
+    		logger.debug("Argument value: " + testCommand.getParameters()[k]);
     		logger.debug("Argument class: " + argTypes[k]);
     	}
 
@@ -106,6 +122,9 @@ public class CommandRunner {
 	        } catch (SecurityException e) {
 	        	logger.debug("Not allowed to call method " + keyword + " from Provider <" + provider.getClass().getName() + "> ");
 	        } catch (NoSuchMethodException e) {
+	        	for (Object object2 : argTypes) {	        		
+	        		logger.debug("Method: " + keyword + ": Arg type: " + object2);	        		
+	        	}
 	        	logger.debug("Method: " + keyword + " not found in Provider <" + provider.getClass().getName() + "> ");
 	        }
     	}

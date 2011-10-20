@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -46,6 +47,7 @@ import org.testng.annotations.Test;
 
 import au.com.onegeek.lambda.framework.selenium.analytics.Analytics;
 import au.com.onegeek.lambda.framework.selenium.analytics.SiteCatalystAnalyticsImpl;
+import au.com.onegeek.lambda.parser.XslxUtil;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -94,7 +96,6 @@ public class TestWebDriver { //extends AbstractTestNGSpringContextTests {
         
         Workbook workbook = new XSSFWorkbook(excelInputStream);
         logger.debug("workbook" + workbook.toString());
-
         
         // Parse Data sheets into Data object (Map?)
         // Should variables start with $ or something?
@@ -117,8 +118,8 @@ public class TestWebDriver { //extends AbstractTestNGSpringContextTests {
         		Row row = sheet.getRow(sheet.getFirstRowNum());
         		while (!done) {
         			// TODO: parse numerics correctly (i.e. don't add decimal points if not needed)
-        			String key = (String) TestXslxData.objectFrom(workbook, row.getCell(0));
-        			String value = (String) TestXslxData.objectFrom(workbook, row.getCell(1));
+        			String key = (String) XslxUtil.objectFrom(workbook, row.getCell(0));
+        			String value = (String) XslxUtil.objectFrom(workbook, row.getCell(1));
         			logger.debug("Adding variable to map: " + key + ":" + value);
         			map.put(key, value);	
         			
@@ -162,8 +163,8 @@ public class TestWebDriver { //extends AbstractTestNGSpringContextTests {
         		Iterator<Cell> iterator = row.cellIterator();
 		        while(iterator.hasNext()) {
 		        	Cell cell = iterator.next();
-		        	logger.debug("Cell: " + TestXslxData.objectFrom(workbook, cell));
-			        String cellValue = TestXslxData.objectFrom(workbook, cell).toString();
+		        	logger.debug("Cell: " + XslxUtil.objectFrom(workbook, cell));
+			        String cellValue = XslxUtil.objectFrom(workbook, cell).toString();
 		        	
 			        // variable substitution
 			        // TODO: make this better, it doesn't really extract out a variable name very well - regex would be much better...

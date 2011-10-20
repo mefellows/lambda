@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly
+    xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>clamshell-assembly</id>
+    <formats>
+        <format>dir</format>
+<!--         <format>tar.gz</format> -->
+<!--         <format>zip</format> -->
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <files>
+        <file>
+            <source>bin/lambda.sh</source>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>555</fileMode>
+        </file>
+        <file>
+            <source>bin/wlambda.bat</source>
+            <outputDirectory>bin</outputDirectory>        
+        </file>
+        <file>
+            <source>bin/setupClasspath.bat</source>
+            <outputDirectory>bin</outputDirectory>        
+        </file>
+    </files>
+
+    <dependencySets>
+
+        <!-- Clamshell Launcher -->
+<!--         <dependencySet> -->
+<!--             <outputDirectory>/</outputDirectory> -->
+<!--             <includes> -->
+<!--                 <include>cli.clamshell:clamshell-launcher</include> -->
+<!--             </includes> -->
+<!--         </dependencySet> -->
+
+
+        <!-- Clamshell CLI Library -->
+        <dependencySet>
+            <outputDirectory>clilib</outputDirectory>
+            <includes>
+                <include>cli.clamshell:clamshell-api</include>
+                <include>cli.clamshell:clamshell-commons</include>
+                <include>cli.clamshell:clamshell-launcher</include>
+            </includes>
+        </dependencySet>
+        
+        <!-- Clamshell plugins -->
+        <dependencySet>
+            <outputDirectory>plugins</outputDirectory>
+            <includes>
+                <include>cli.clamshell:*</include>
+                <include>au.com.onegeek:lambda-splash</include>
+            </includes>
+            <excludes>
+                <exclude>cli.clamshell:clamshell-api</exclude>
+                <exclude>cli.clamshell:clamshell-commons</exclude>
+                <exclude>cli.clamshell:clamshell-splashscreen</exclude>
+                <exclude>cli.clamshell:clamshell-launcher</exclude>
+            </excludes>
+        </dependencySet>
+        
+    </dependencySets>
+    
+    <!-- Clamshell Lib -->
+    <moduleSets>
+        <moduleSet>
+
+            <!-- Enable access to all projects in the current multi-module build! -->
+            <useAllReactorProjects>true</useAllReactorProjects>
+
+            <!-- Now, select which projects to include in this module-set. -->
+            <includeSubModules>true</includeSubModules>
+            
+            <excludes>
+                <exclude>au.com.onegeek:lambda-assembly</exclude>
+                <exclude>au.com.onegeek:lambda-core</exclude>
+            </excludes>
+            
+            <binaries>
+                <outputDirectory>plugins/</outputDirectory>
+                <unpack>false</unpack>
+                <includeDependencies>true</includeDependencies>
+                
+                <dependencySets>
+                    <!-- Need to create a 'dist' dir or something containing the startup .sh\.bat files -->
+
+                    <!-- Need to package the Clamshell stuff nicely into the correct folder structure (lib/clilib/plugins etc.) -->
+                    <dependencySet>
+                        <includes>
+                            <include>*</include>                            
+                        </includes>
+                        <excludes>
+                            <exclude>cli.clamshell:*</exclude>
+                            <exclude>au.com.onegeek:lambda-assembly</exclude>
+                        </excludes>
+                        <outputDirectory>lib</outputDirectory>
+                    </dependencySet>
+                </dependencySets>
+            </binaries>            
+        </moduleSet>
+    </moduleSets>
+</assembly>

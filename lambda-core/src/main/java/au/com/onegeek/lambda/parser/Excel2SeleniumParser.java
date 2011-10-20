@@ -34,7 +34,6 @@ import au.com.onegeek.lambda.core.exception.CannotModifyTestMethodException;
 import au.com.onegeek.lambda.core.exception.UnableToParseDataException;
 import au.com.onegeek.lambda.core.exception.UnableToParseTestsException;
 import au.com.onegeek.lambda.core.exception.VariableNotFoundException;
-import au.com.onegeek.lambda.tests.TestXslxData;
 import com.thoughtworks.selenium.Selenium;
 
 public class Excel2SeleniumParser implements ITestParser, IDataParser {
@@ -85,12 +84,13 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
         		boolean done = false;
         		
         		Row row = sheet.getRow(sheet.getFirstRowNum());
-        		while (!done) {
+        		
+        		while (!done && row != null && row.getPhysicalNumberOfCells() > 0) {
         			// TODO: parse numerics correctly (i.e. don't add decimal points if not needed)
-        			String key = (String) TestXslxData.objectFrom(workbook, row.getCell(0));
+        			String key = (String) XslxUtil.objectFrom(workbook, row.getCell(0));
         			String value = null;
         			try {
-        				value = (String) TestXslxData.objectFrom(workbook, row.getCell(1));
+        				value = (String) XslxUtil.objectFrom(workbook, row.getCell(1));
         				logger.debug("Adding variable to map: " + key + ":" + value);
         				map.put(key, value);	
         				
@@ -143,7 +143,7 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 		        		Iterator<Cell> iterator = row.cellIterator();
 				        while(iterator.hasNext()) {
 				        	Cell cell = iterator.next();
-					        String cellValue = (cell == null || cell.toString() == "") ? "" : TestXslxData.objectFrom(workbook, cell).toString();		        	
+					        String cellValue = (cell == null || cell.toString() == "") ? "" : XslxUtil.objectFrom(workbook, cell).toString();		        	
 					        logger.debug("Cell: " + cellValue);
 					        
 					        if (cellValue.startsWith("test")) {
@@ -195,6 +195,19 @@ public class Excel2SeleniumParser implements ITestParser, IDataParser {
 					}
 				    currentRow++;
 		        }
+				// Blank row could mean a test case has just been completed
+				// Complete last test case by adding a data provider
+    			if (testCaseInProgress && dataProviderAdded == false) {
+    				try {
+    					logger.debug("In Progress Test Case now being closed off and added to class...");
+    					builder.addDataProvider();
+    					dataProviderAdded = true;
+    					logger.debug("In Progress Test Case now closed off!");
+    				} catch (CannotCreateDataProviderException e) {
+    					throw new CannotCreateTestClassException("Could not create Test case as a DataProvider for the method could not be created. Embedded exception: " + e.getMessage());
+    				}
+    			}
+    			
 		        if (testCaseInProgress) {
 		        	logger.debug("Generating class file");
 		        	this.tests.add(builder.getCreatedClass());

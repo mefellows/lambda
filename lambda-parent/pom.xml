@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -17,11 +18,57 @@
         </contributor>
     </contributors>
     
+    <properties>
+        <clamshell.version>0.1</clamshell.version>
+    </properties>
+
     <modules>
         <module>../lambda-core</module>
         <module>../lambda-cli</module> <!-- How to embed\insert Clamshell into here? -->
         <module>../lambda-splash</module>
+        <module>../lambda-assembly</module> <!--  or here? -->
     </modules>
+
+    <dependencyManagement>
+        <!-- CLI -->
+        <dependencies>
+            <dependency>
+                <groupId>cli.clamshell</groupId>
+                <artifactId>clamshell-api</artifactId>
+                <version>${clamshell.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cli.clamshell</groupId>
+                <artifactId>clamshell-cmd-controller</artifactId>
+                <version>${clamshell.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cli.clamshell</groupId>
+                <artifactId>clamshell-commands</artifactId>
+                <version>${clamshell.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cli.clamshell</groupId>
+                <artifactId>clamshell-console</artifactId>
+                <version>${clamshell.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cli.clamshell</groupId>
+                <artifactId>clamshell-echo-controller</artifactId>
+                <version>${clamshell.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cli.clamshell</groupId>
+                <artifactId>clamshell-launcher</artifactId>
+                <version>${clamshell.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cli.clamshell</groupId>
+                <artifactId>clamshell-shell</artifactId>
+                <version>${clamshell.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <repositories>
         <repository>
@@ -35,7 +82,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        
+
         <repository>
             <id>com.springsource.repository.bundles.external</id>
             <name>SpringSource EBR - External Bundle Releases</name>
@@ -54,6 +101,22 @@
             <url>http://repo.onegeek.com.au</url>
         </repository>
     </repositories>
+
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <version>2.2.1</version>
+              <configuration>
+                <descriptors>
+                  <descriptor>src/assemble/bin.xml</descriptor>
+                </descriptors>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
 
     <distributionManagement>
         <repository>
