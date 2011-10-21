@@ -1,0 +1,6 @@
+-f
+/opt/lambda/retail.xlsx
+-e
+http://retail.stage.mit
+-b
+firefox

@@ -7,25 +7,32 @@
     <formats>
         <format>dir</format>
 <!--         <format>tar.gz</format> -->
-<!--         <format>zip</format> -->
+        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
     <files>
         <file>
-            <source>bin/lambda.sh</source>
-            <outputDirectory>bin</outputDirectory>
+            <source>lambda.sh</source>
+            <outputDirectory>/</outputDirectory>
             <fileMode>555</fileMode>
         </file>
         <file>
-            <source>bin/wlambda.bat</source>
-            <outputDirectory>bin</outputDirectory>        
+            <source>wlambda.bat</source>
+            <outputDirectory>/</outputDirectory>        
         </file>
         <file>
             <source>bin/setupClasspath.bat</source>
             <outputDirectory>bin</outputDirectory>        
         </file>
     </files>
+    
+    <fileSets>
+        <fileSet>
+            <directory>examples</directory>
+            <outputDirectory>examples</outputDirectory>
+        </fileSet>
+    </fileSets>
 
     <dependencySets>
 

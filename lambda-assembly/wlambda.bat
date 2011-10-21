@@ -21,12 +21,7 @@ if "%JAVA_HOME%" == "" (
 echo checking classpath...
 
 rem ### Setup CLASSPATH
-call "%LAMBDA_HOME%\setupClasspath.bat"
-rem set CLASSPATH=%CLASSPATH%:clilib\clamshell-launcher-0.1.jar
-
-ECHO "%CLASSPATH%"
-
-pause
+call "%LAMBDA_HOME%\bin\setupClasspath.bat"
 
 rem Check if there are JAR files in the lib directory.
 if "%CLASSPATH%" == "" (
@@ -38,3 +33,5 @@ if "%CLASSPATH%" == "" (
 echo Starting Lambda...
 
 "%JAVA_HOME%\bin\java" -classpath "%CLASSPATH%" cli.Run
+
+pause

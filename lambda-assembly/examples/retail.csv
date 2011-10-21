@@ -1,0 +1,12 @@
+retail,,
+,open,/,
+,assertTitle,Domain Names Registration | Web Hosting | Melbourne IT,
+,click,id=nameid,
+,type,id=nameid,domaintotest
+,clickAndWait,id=go,
+,assertTitle,Search for Domain Names with Melbourne IT,
+,assertTextPresent,domaintotest.com.au is available,
+,assertElementPresent,id=registerSearchedDomain,
+,clickAndWait,id=registerSearchedDomain,
+,assertTitle,Melbourne IT,
+,assertTextPresent,Confirm Selection,

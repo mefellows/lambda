@@ -1,0 +1,6 @@
+-f
+C:\Documents and Settings\mfellows\Desktop\lambda\retail.xlsx
+-e
+http://retail.stage.mit
+-b
+firefox
