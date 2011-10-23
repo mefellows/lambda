@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuite name="Command line test" failures="2" tests="2" time="0.0020" errors="0">
   <properties/>
-  <testcase name="testTheGoogle" time="0.0010" classname="au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests">
+  <testcase name="testTheGoogle" time="0.0" classname="au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests">
     <failure type="java.lang.NullPointerException">
       <![CDATA[java.lang.NullPointerException
-	at au.com.onegeek.lambda.core.CommandRunner.runCommand(CommandRunner.java:120)
-	at au.com.onegeek.lambda.core.Test.executeCommand(Test.java:45)
+	at au.com.onegeek.lambda.core.CommandRunner.runCommand(CommandRunner.java:139)
+	at au.com.onegeek.lambda.core.Test.executeCommand(Test.java:64)
 	at au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests.testTheGoogle(eatmyTests.java)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
@@ -16,8 +16,8 @@
   <testcase name="testTheGoogle" time="0.0" classname="au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests">
     <failure type="java.lang.NullPointerException">
       <![CDATA[java.lang.NullPointerException
-	at au.com.onegeek.lambda.core.CommandRunner.runCommand(CommandRunner.java:120)
-	at au.com.onegeek.lambda.core.Test.executeCommand(Test.java:45)
+	at au.com.onegeek.lambda.core.CommandRunner.runCommand(CommandRunner.java:139)
+	at au.com.onegeek.lambda.core.Test.executeCommand(Test.java:64)
 	at au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests.testTheGoogle(eatmyTests.java)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)

@@ -1,18 +1,27 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>lambda</artifactId>
         <groupId>au.com.onegeek</groupId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../lambda-parent</relativePath>
     </parent>
-    
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>au.com.onegeek</groupId>
-  <artifactId>lambda-splash</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Lambda CLI Splash Screen</name>
-  <description>Lambda CLI Splash Screen</description>
-  
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>au.com.onegeek</groupId>
+    <artifactId>lambda-splash</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Lambda CLI Splash Screen</name>
+    <description>Lambda CLI Splash Screen</description>
+
+    <licenses>
+        <license>
+            <name>apache_v2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <dependencies>
         <!-- CLI -->
         <dependency>
@@ -39,5 +48,5 @@
             </plugin>
         </plugins>
 
-    </build>  
+    </build>
 </project>

@@ -1,10 +1,27 @@
+/*
+ * #%L
+ * Lambda Core
+ * %%
+ * Copyright (C) 2011 null
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package au.com.onegeek.lambda.core;
-
+//test -f /Users/mfellows/development/lambda/lambda-assembly/target/lambda-0.0.1-SNAPSHOT-clamshell-assembly/examples/retail.xlsx -b chrome -e http://ote.retail.melbourneit.com.au
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,15 +29,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 
 import au.com.onegeek.lambda.core.exception.UnableToParseDataException;
 import au.com.onegeek.lambda.core.exception.UnableToParseTestsException;
 import au.com.onegeek.lambda.parser.Excel2SeleniumParser;
-import au.com.onegeek.lambda.tests.SeleniumAssertions;
-import au.com.onegeek.lambda.tests.TestWebDriver;
 
 /**
  * Front end for running the Lamba browser testing framework.
@@ -192,7 +206,7 @@ public class Lambda {
 		// Create the browser driver
 		try {
 			logger.debug("Creating " + browser + " Driver.");
-			this.driver = TestWebDriver.getDriver(this.browser);
+			this.driver = BrowserFactory.getDriver(this.browser);
 			driver.get(this.hostname);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -222,6 +236,8 @@ public class Lambda {
 		testng.run();
 
 		// Close down browsers etc.
+		
+		// Is this order correct?
 	    selenium.stop();
 	    driver.quit();
 	    selenium = null;

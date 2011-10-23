@@ -13,6 +13,14 @@
     <name>Lambda CLI</name>
     <description>Lambda CLI</description>
 
+    <licenses>
+        <license>
+            <name>apache_v2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     <dependencies>
         <!-- CLI -->
         <dependency>
@@ -28,7 +36,14 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>0.9.18</version>
-        </dependency>        
+        </dependency> 
+        
+        <!-- Latest JLine (Override CLamshell) -->
+        <dependency>
+            <groupId>jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>0.9.93</version>
+        </dependency>               
     </dependencies>
 
     <build>

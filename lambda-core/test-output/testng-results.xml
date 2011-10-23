@@ -1,12 +1,12 @@
 <testng-results>
   <reporter-output>
   </reporter-output>
-  <suite name="Command line suite" duration-ms="2" started-at="2011-10-21T00:55:10Z" finished-at="2011-10-21T00:55:10Z">
+  <suite name="Command line suite" duration-ms="2" started-at="2011-10-23T22:33:04Z" finished-at="2011-10-23T22:33:04Z">
     <groups>
     </groups>
-    <test name="Command line test" duration-ms="2" started-at="2011-10-21T00:55:10Z" finished-at="2011-10-21T00:55:10Z">
+    <test name="Command line test" duration-ms="2" started-at="2011-10-23T22:33:04Z" finished-at="2011-10-23T22:33:04Z">
       <class name="au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests">
-        <test-method status="FAIL" signature="testTheGoogle(java.lang.String, java.lang.String)" name="testTheGoogle" duration-ms="1" started-at="2011-10-21T00:55:10Z" finished-at="2011-10-21T00:55:10Z">
+        <test-method status="FAIL" signature="testTheGoogle(java.lang.String, java.lang.String)" name="testTheGoogle" duration-ms="0" started-at="2011-10-23T22:33:04Z" finished-at="2011-10-23T22:33:04Z">
           <params>
             <param index="0">
               <value>
@@ -22,8 +22,8 @@
           <exception class="java.lang.NullPointerException">
             <full-stacktrace>
               <![CDATA[java.lang.NullPointerException
-	at au.com.onegeek.lambda.core.CommandRunner.runCommand(CommandRunner.java:120)
-	at au.com.onegeek.lambda.core.Test.executeCommand(Test.java:45)
+	at au.com.onegeek.lambda.core.CommandRunner.runCommand(CommandRunner.java:139)
+	at au.com.onegeek.lambda.core.Test.executeCommand(Test.java:64)
 	at au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests.testTheGoogle(eatmyTests.java)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
@@ -52,7 +52,7 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="FAIL" signature="testTheGoogle(java.lang.String, java.lang.String)" name="testTheGoogle" duration-ms="0" started-at="2011-10-21T00:55:10Z" finished-at="2011-10-21T00:55:10Z">
+        <test-method status="FAIL" signature="testTheGoogle(java.lang.String, java.lang.String)" name="testTheGoogle" duration-ms="0" started-at="2011-10-23T22:33:04Z" finished-at="2011-10-23T22:33:04Z">
           <params>
             <param index="0">
               <value>
@@ -68,8 +68,8 @@
           <exception class="java.lang.NullPointerException">
             <full-stacktrace>
               <![CDATA[java.lang.NullPointerException
-	at au.com.onegeek.lambda.core.CommandRunner.runCommand(CommandRunner.java:120)
-	at au.com.onegeek.lambda.core.Test.executeCommand(Test.java:45)
+	at au.com.onegeek.lambda.core.CommandRunner.runCommand(CommandRunner.java:139)
+	at au.com.onegeek.lambda.core.Test.executeCommand(Test.java:64)
 	at au.com.onegeek.lambda.tests.runtimegenerated.eatmyTests.testTheGoogle(eatmyTests.java)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)

@@ -8,6 +8,11 @@
     <name>Lamba</name>
     <description>Lambda - Web Automated Browser tests using Selenium and WebDriver</description>
     <packaging>pom</packaging>
+    <inceptionYear>2011</inceptionYear>
+    <organization>
+        <name>OneGeek</name>
+        <url>http://www.onegeek.com.au</url>
+    </organization>
 
     <contributors>
         <contributor>
@@ -17,16 +22,24 @@
             <email>matt.fellows@onegeek.com.au</email>
         </contributor>
     </contributors>
-    
+
+    <licenses>
+        <license>
+            <name>apache_v2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <clamshell.version>0.1</clamshell.version>
     </properties>
 
     <modules>
         <module>../lambda-core</module>
-        <module>../lambda-cli</module> <!-- How to embed\insert Clamshell into here? -->
+        <module>../lambda-cli</module>
         <module>../lambda-splash</module>
-        <module>../lambda-assembly</module> <!--  or here? -->
+        <module>../lambda-assembly</module>
     </modules>
 
     <dependencyManagement>
@@ -100,23 +113,63 @@
             <name>OneGeek Maven Repository</name>
             <url>http://repo.onegeek.com.au</url>
         </repository>
+
+        <repository>
+            <id>jline</id>
+            <name>JLine Project Repository</name>
+            <url>http://jline.sourceforge.net/m2repo</url>
+        </repository>
     </repositories>
 
-      <build>
+    <build>
         <pluginManagement>
-          <plugins>
-            <plugin>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <version>2.2.1</version>
-              <configuration>
-                <descriptors>
-                  <descriptor>src/assemble/bin.xml</descriptor>
-                </descriptors>
-              </configuration>
-            </plugin>
-          </plugins>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>1.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2.1</version>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>src/assemble/bin.xml</descriptor>
+                        </descriptors>
+                    </configuration>
+                </plugin>
+            </plugins>
         </pluginManagement>
-      </build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <verbose>false</verbose>
+                    <licenseName>apache_v2</licenseName>
+                    <header>src/licenses/apache_v2-header.txt</header>
+                    <roots>
+                        <root>src/main/java</root>
+                        <root>src/test</root>
+                    </roots>
+
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <distributionManagement>
         <repository>

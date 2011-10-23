@@ -12,8 +12,17 @@
     <artifactId>lambda-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Lambda Core</name>
+    
     <description>Lambda Core packages for running lambda in a variety of environments</description>
 
+    <licenses>
+        <license>
+            <name>apache_v2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     <properties>
         <org.springframework-version>3.0.5.RELEASE</org.springframework-version>
         <org.aspectj.version>1.6.6.RELEASE</org.aspectj.version>
@@ -24,6 +33,11 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
             <version>2.7.0</version>
         </dependency>
 

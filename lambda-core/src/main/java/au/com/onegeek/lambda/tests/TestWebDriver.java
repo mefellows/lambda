@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * Lambda Core
+ * %%
+ * Copyright (C) 2011 null
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package au.com.onegeek.lambda.tests;
 
 import static org.testng.Assert.fail;
@@ -33,6 +52,7 @@ import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -437,6 +457,8 @@ public class TestWebDriver { //extends AbstractTestNGSpringContextTests {
 
 			} else if (os.indexOf("Linux") > -1) {
 
+			} else if (os.indexOf("Windows") > -1) {
+				driver = new ChromeDriver();
 			} else {
 				throw new Exception(
 						"Cannot find WebDriver for os, therefore cannot run these tests: "
@@ -444,6 +466,8 @@ public class TestWebDriver { //extends AbstractTestNGSpringContextTests {
 			}
 
 			driver = new ChromeDriver(capabilities);
+		} else if (browser.equalsIgnoreCase("ie8") || browser.equalsIgnoreCase("iexplore8")) {
+			driver = new InternetExplorerDriver(); 
 		}
 
 		return driver;

@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * Lambda CLI
+ * %%
+ * Copyright (C) 2011 OneGeek
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package au.com.onegeek.lambda.cli;
 
 import java.util.Collections;
@@ -5,6 +24,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.com.onegeek.lambda.core.Lambda;
 import au.com.onegeek.lambda.core.exception.UnableToParseDataException;
@@ -26,6 +48,11 @@ import com.beust.jcommander.internal.Lists;
  *
  */
 public class LambdaCmd implements Command {
+	/**
+	 * Class logger.
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(LambdaCmd.class);
+	
 	private static final String ACTION_NAME = "test";
 	private static final String APPLICATION_NAME = "Clambda Shell (Surface Tension)";
 	private LambdaDescriptor descriptor;
@@ -41,7 +68,7 @@ public class LambdaCmd implements Command {
 		@Parameter(names = { "-d", "--dataset" }, arity = 1, required = false, description = "Specifies the location of dataset.")
 		public String dataSet;
 
-		@Parameter(names = { "-e", "--environment" }, arity = 1, required = true, description = "Specifies the hostname for which to run the tests against.")
+		@Parameter(names = { "-h", "--hostname" }, arity = 1, required = true, description = "Specifies the environment hostname for which to run the tests against.")
 		public String environment;
 
 		@Parameter(names = {"-b", "--browser" }, required = false, description = "Specifies the browsers for which to run the tests against. This parameter can be used multiple times. e.g. -b firefox -b ie7 -b chrome. Defaults to 'firefox'")

@@ -12,6 +12,14 @@
     <name>Lamba project assembly</name>
     <description>Lambda project assembly</description>
 
+    <licenses>
+        <license>
+            <name>apache_v2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     <dependencies>
             <dependency>
                 <groupId>cli.clamshell</groupId>

@@ -11,26 +11,23 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <files>
-        <file>
-            <source>lambda.sh</source>
-            <outputDirectory>/</outputDirectory>
-            <fileMode>555</fileMode>
-        </file>
-        <file>
-            <source>wlambda.bat</source>
-            <outputDirectory>/</outputDirectory>        
-        </file>
-        <file>
-            <source>bin/setupClasspath.bat</source>
-            <outputDirectory>bin</outputDirectory>        
-        </file>
-    </files>
-    
     <fileSets>
+        <fileSet>
+            <directory>bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>555</fileMode>
+        </fileSet>
         <fileSet>
             <directory>examples</directory>
             <outputDirectory>examples</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>lib</directory>
+            <outputDirectory>lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>conf</directory>
+            <outputDirectory>conf</outputDirectory>
         </fileSet>
     </fileSets>
 
