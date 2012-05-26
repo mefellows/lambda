@@ -82,6 +82,7 @@
             <excludes>
                 <exclude>au.com.onegeek:lambda-assembly</exclude>
                 <exclude>au.com.onegeek:lambda-core</exclude>
+                <exclude>au.com.onegeek:lambda-api</exclude>
             </excludes>
             
             <binaries>

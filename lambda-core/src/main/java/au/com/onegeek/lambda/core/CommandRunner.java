@@ -2,7 +2,7 @@
  * #%L
  * Lambda Core
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,17 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverBackedSelenium;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
-import au.com.onegeek.lambda.tests.SeleniumAssertions;
-import au.com.onegeek.lambda.tests.TestWebDriver;
+import au.com.onegeek.lambda.api.AssertionProvider;
+import au.com.onegeek.lambda.api.TestCommand;
 
 /**
  * 
- * Command Runner supports pluggable keyword-driven command to extend the
+ * Command Runner supports pluggable keyword-driven commands to extend the
  * assertion library outside of Lambda.
  * 
  * This class is an implementation of both the Mediator and Singleton design patterns.
@@ -48,6 +47,8 @@ import au.com.onegeek.lambda.tests.TestWebDriver;
  * @author mfellows
  *
  */
+@Configurable
+//@Component
 public class CommandRunner {
 	private static final Logger logger = LoggerFactory.getLogger(CommandRunner.class);
 	
@@ -57,27 +58,15 @@ public class CommandRunner {
 	 * Singleton instance.
 	 */
 	private static CommandRunner _instance;
-		
-	/**
-	 * List of classes providing assertion capabilities.
-	 */
-	protected List<Object> assertionProviders;
 
-	//@Autowired
-	private WebDriver driver;
+	@Autowired
+	private Lambda lambda;
 
-	//@Autowired
-	private WebDriverBackedSelenium selenium;
-	
-	
-	private CommandRunner() {
-		
-		this.driver = Lambda.getInstance().getDriver();
-		this.selenium = Lambda.getInstance().getSelenium();
-		assertionProviders = new ArrayList<Object>();
-		assertionProviders.add(selenium);
-		assertionProviders.add(new SeleniumAssertions(selenium));	
+//	private CommandRunner() {
+		private void init() {		
+			logger.info("Lambda is null?" + (lambda == null));
 	}
+
 	
 	/**
 	 * Find the assertion class implementor and invoke the call using reflection.
@@ -133,10 +122,14 @@ public class CommandRunner {
     		logger.debug("Argument class: " + argTypes[k]);
     	}
 
+    	logger.info("looking for providers...");
+    	
         // Find the implementing class of the method
-    	for(Object provider : assertionProviders) {
+    	for(Object provider : this.lambda.getAssertionProviders()) {
 	    	try {
+	    		logger.info("getting method....");
 	    		method = provider.getClass().getMethod(keyword, argTypes);
+	    		logger.info("got one!");
 	    		object = provider;
 	        } catch (SecurityException e) {
 	        	logger.debug("Not allowed to call method " + keyword + " from Provider <" + provider.getClass().getName() + "> ");
@@ -148,7 +141,10 @@ public class CommandRunner {
 	        }
     	}
     	
+    	logger.info("Checknig if we found a provider");
+    	
     	if (object == null) {
+    		logger.error("cannot find provider of method " + keyword);
     		fail("Cannot find a provider of method: '" + keyword + "'");
     	} else {
     		logger.debug("Found source object for method, object: <" + object.toString() + ">");
@@ -157,6 +153,7 @@ public class CommandRunner {
     	// Invoke method
         Object result = "not set";
         try {
+        	logger.info("Invoking method '" + keyword + "' on object");
         	result = method.invoke(object, testCommand.getParameters());
         } catch (IllegalArgumentException e) {
         	fail("Method '" + keyword + "' illegal argument exception: " + e.getMessage());
@@ -165,7 +162,13 @@ public class CommandRunner {
         } catch (InvocationTargetException e) {
         	// This is usually a failed Assertion from an AssertionProvider
         	logger.debug("InvocationTargetException, usually a failed assertion: ");
-        	fail("Method '" + keyword + "' InvocationTarget exception: " + e.getMessage());        	
+        	if (logger.isErrorEnabled()) {
+        		e.printStackTrace();
+        	}
+        	fail("Method '" + keyword + "' InvocationTarget exception: " + e.getMessage());
+        	
+        	// TODO: remove\handle this better
+        	e.printStackTrace();
         } catch (AssertionError e) {
         	logger.error("Assertion fail: " + e.getMessage());
         }
@@ -178,12 +181,12 @@ public class CommandRunner {
 	 * 
 	 * @return
 	 */
-	public static CommandRunner getInstance() {
-		if (_instance != null) {
-			return _instance;
-		}
-		
-		_instance = new CommandRunner();
-		return _instance;
-	}
+//	public static CommandRunner getInstance() {
+//		if (_instance != null) {
+//			return _instance;
+//		}
+//		
+//		_instance = new CommandRunner();
+//		return _instance;
+//	}
 }

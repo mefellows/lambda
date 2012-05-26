@@ -2,7 +2,7 @@
  * #%L
  * Lambda Core
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 import org.testng.annotations.Test;
 
+import au.com.onegeek.lambda.api.TestCommand;
 import au.com.onegeek.lambda.core.JavassistTestBuilderImpl;
-import au.com.onegeek.lambda.core.TestCommand;
 
 public class TestFactoryTests {
 	private static final Logger logger = LoggerFactory.getLogger(TestFactoryTests.class);
@@ -77,12 +77,13 @@ public class TestFactoryTests {
 		// Running TestNG inside of TestNG
 		logger.info("Setting up TestNG");
 		TestNG testng = new TestNG();
+		testng.setVerbose(10);
 		TestListenerAdapter tla = new TestListenerAdapter();
 		testng.setTestClasses(new Class[]{f.getCreatedClass()});
 		testng.addListener(tla);
 				
 		// Run the TestNG suite
 		logger.info("Running Tests");
-		testng.run();		
+		testng.run();
 	}
 }

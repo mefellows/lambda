@@ -12,7 +12,8 @@ rem echo %JAVA_HOME%
 
 if "%LAMBDA_HOME%" == "" (
   echo The LAMBDA_HOME environment variable is not defined.
-  rem exit /B 1
+  pause
+  exit /B 1
 )
 
 echo checking classpath...

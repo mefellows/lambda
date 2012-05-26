@@ -1,6 +1,6 @@
 -f
 /opt/lambda/retail.xlsx
--e
+-h
 http://retail.stage.mit
 -b
 firefox

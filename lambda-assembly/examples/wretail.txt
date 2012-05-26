@@ -1,6 +1,6 @@
 -f
 C:\Documents and Settings\mfellows\Desktop\lambda\examples\retail.xlsx
--e
+-h
 http://retail.stage.mit
 -b
 chrome

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="10" name="Failed suite [Command line suite]">
+  <test name="Command line test(failed)" preserve-order="true">
+    <classes>
+      <class name="TestSuitedemo1">
+        <methods>
+          <include name="testRetailHomepage" invocation-numbers="0 1"/>
+        </methods>
+      </class>
+    </classes>
+  </test>
+</suite>

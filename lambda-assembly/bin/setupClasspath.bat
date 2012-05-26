@@ -1,8 +1,8 @@
 @echo off 
 rem Check JAVA_HOME and LAMBDA_HOME variables
 if "%JAVA_HOME%" == "" (
-  echo The JAVA_HOME environment variable is not defined.
-  exit /B 1
+  echo The JAVA_HOME environment variable is not defined. This may be an issue.
+  rem exit /B 1
 )
 if "%LAMBDA_HOME%" == "" (
   echo The LAMBDA_HOME environment variable is not defined.
@@ -27,5 +27,4 @@ exit /B 0
 :AppendToClasspath
   set CLASSPATH=%CLASSPATH%;%~1
   goto :eof
-  
   

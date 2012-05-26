@@ -19,18 +19,21 @@
  */
 package au.com.onegeek.lambda.cli;
 
-import java.util.Collections;
-import java.util.Date;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.util.Assert;
 
+import au.com.onegeek.lambda.api.exception.UnableToParseDataException;
+import au.com.onegeek.lambda.api.exception.UnableToParseTestsException;
 import au.com.onegeek.lambda.core.Lambda;
-import au.com.onegeek.lambda.core.exception.UnableToParseDataException;
-import au.com.onegeek.lambda.core.exception.UnableToParseTestsException;
+import au.com.onegeek.lambda.core.exception.ProviderNotFoundException;
 import cli.clamshell.api.Command;
 import cli.clamshell.api.Configurator;
 import cli.clamshell.api.Context;
@@ -47,6 +50,7 @@ import com.beust.jcommander.internal.Lists;
  * @author mfellows
  *
  */
+@Configurable
 public class LambdaCmd implements Command {
 	/**
 	 * Class logger.
@@ -56,6 +60,8 @@ public class LambdaCmd implements Command {
 	private static final String ACTION_NAME = "test";
 	private static final String APPLICATION_NAME = "Clambda Shell (Surface Tension)";
 	private LambdaDescriptor descriptor;
+	
+	@Autowired
 	private Lambda lambda;	
 
 	private class LambdaParams {
@@ -150,7 +156,12 @@ public class LambdaCmd implements Command {
 			if (descriptor != null) {
 				// Extract environment
 				if (descriptor.parameters.environment != null) {
-					lambda.setHostname(descriptor.parameters.environment);
+					try {
+						lambda.setHostname(descriptor.parameters.environment);
+					} catch (IOException e) {
+						c.writeOutput("Hostname provided is invalid: " + e.getMessage());
+						return null;
+					}
 				}				
 
 				// Set test case
@@ -180,6 +191,9 @@ public class LambdaCmd implements Command {
 				} catch (UnableToParseDataException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (ProviderNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			} 
 		} else {
@@ -193,7 +207,9 @@ public class LambdaCmd implements Command {
 	@Override
 	public void plug(Context plug) {
 		descriptor = new LambdaDescriptor();
-		this.lambda = Lambda.getInstance();
+		//this.lambda = Lambda.getInstance();
+		
+		Assert.notNull(this.lambda, "Lambda has not been Autowired");
 	}
 
 	@Override

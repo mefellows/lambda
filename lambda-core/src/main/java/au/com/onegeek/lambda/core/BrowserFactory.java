@@ -2,7 +2,7 @@
  * #%L
  * Lambda Core
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -34,7 +35,9 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.onegeek.lambda.core.exception.BrowserNotFoundException;
+import au.com.onegeek.lambda.api.exception.BrowserNotFoundException;
+
+import com.opera.core.systems.OperaDriver;
 
 public class BrowserFactory {
 	/**
@@ -62,15 +65,17 @@ public class BrowserFactory {
 		} else if (browser.equalsIgnoreCase("firefox")) {
 			logger.debug("Creating new Firefox driver");
 			driver = new FirefoxDriver();
+		} else if (browser.equalsIgnoreCase("opera")) {
+			logger.debug("Creating new Opera driver");
+			driver = new OperaDriver();
 		} else if (browser.equalsIgnoreCase("chrome")) {
 			
 			logger.debug("Creating new Chrome driver");
 			// Chrome has it's own web driver implementation, need to specify the property 'webdriver.chrome.driver'
 			Properties props = System.getProperties();
-			DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 						
-			if (System.getProperty("webdriver.chrome.driver") != null) {			
-				// Create a new instance of the Firefox driver
+			if (System.getProperty("webdriver.chrome.driver") == null) {			
+				// Create a new instance of the Chrome driver
 				// Notice that the remainder of the code relies on the interface,
 				// not the implementation.
 				Enumeration e = props.propertyNames();
@@ -86,7 +91,8 @@ public class BrowserFactory {
 	
 				// Check OS
 				if (os.indexOf("Mac OS X") > -1) {
-					capabilities.setCapability("chrome.binary", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome");
+					//capabilities.setCapability("chrome.binary", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome");
+					System.setProperty("webdriver.chrome.driver", currentDir + "/lib/chromedriver-macosx");
 				} else if (arch.equalsIgnoreCase("32") && os.indexOf("Linux") > -1) {
 					System.setProperty("webdriver.chrome.driver", currentDir + "/lib/chromedriver-linux32");
 				} else if (arch.equalsIgnoreCase("64") && os.indexOf("Linux") > -1) {
@@ -100,7 +106,10 @@ public class BrowserFactory {
 				}
 			}
 
-			driver = new ChromeDriver(capabilities);
+			
+			logger.debug("Chrome driver binary: " + System.getProperty("webdriver.chrome.driver"));
+//			driver = new ChromeDriver(capabilities);
+			driver = new ChromeDriver();
 		} else if (browser.equalsIgnoreCase("ie") || browser.equalsIgnoreCase("iexplore")) {
 			logger.debug("Creating new Internet Explorer driver");
 			driver = new InternetExplorerDriver(); 

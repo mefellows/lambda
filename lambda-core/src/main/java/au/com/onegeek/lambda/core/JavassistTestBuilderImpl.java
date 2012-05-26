@@ -2,7 +2,7 @@
  * #%L
  * Lambda Core
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,13 +50,14 @@ import javassist.bytecode.annotation.StringMemberValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.onegeek.lambda.core.exception.CannotCreateDataProviderException;
-import au.com.onegeek.lambda.core.exception.CannotCreateTestClassException;
-import au.com.onegeek.lambda.core.exception.CannotCreateVariableException;
-import au.com.onegeek.lambda.core.exception.CannotModifyTestMethodException;
-import au.com.onegeek.lambda.core.exception.VariableNotFoundException;
+import au.com.onegeek.lambda.api.Test;
+import au.com.onegeek.lambda.api.TestCommand;
+import au.com.onegeek.lambda.api.exception.CannotCreateDataProviderException;
+import au.com.onegeek.lambda.api.exception.CannotCreateTestClassException;
+import au.com.onegeek.lambda.api.exception.CannotModifyTestMethodException;
+import au.com.onegeek.lambda.api.exception.VariableNotFoundException;
 
-public class JavassistTestBuilderImpl {// implements ITestBuilder {
+public class JavassistTestBuilderImpl {// implements TestBuilder {
 	private static final Logger logger = LoggerFactory.getLogger(JavassistTestBuilderImpl.class);
 	
 	/**
@@ -80,7 +81,7 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 	private List<Map<String, Object>> dataSet;
 	
 	/**
-	 * Orderd list of variables used in the current method
+	 * Ordered list of variables used in the current method
 	 * providing easy lookup.
 	 * 
 	 * Used to create <code>@DataProvider</code> annotations for test methods.
@@ -133,6 +134,8 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 		classPool.importPackage("org.testng");
 		classPool.importPackage("org.testng.annotations");
 		classPool.importPackage("au.com.onegeek.lambda.core");
+		classPool.importPackage("au.com.onegeek.lambda.api");
+		classPool.importPackage("au.com.onegeek.lambda.exception");
 		classPool.importPackage("org.slf4j");
 		
 		// Create the class container to add methods to
@@ -250,9 +253,6 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 			        while (m.find()) {
 		        		String match = m.group();
 		        		logger.debug("variable reference found from string '{}': {}, adding to map of vars to add?", param, match.substring(1));
-		        		if (this.methodVariableToParameterMap.get(match) != null) {
-		        			logger.debug("Variable'{}' exists in map, ignoring...", match);
-		        		} else {
 		        			// Determine parameter type from a provided data set		        			
 		        			@SuppressWarnings("rawtypes")
 							Class type = null;
@@ -263,19 +263,25 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 		            			throw new VariableNotFoundException();
 		            		}		        			
 		        			
-		            		// Add variable to map
-		        			this.methodVariableToParameterMap.put(match.substring(1), type);
-		        			
-		        			// Update method signature
-		        			try {
-		        				// Dynamically find type, import into classpool and append the param into the method signature
-		        				this.classPool.importPackage(type.getPackage().getName());
-		        				this.ctMethod.addParameter(this.classPool.get(type.getName()));		        				
-		        			} catch (NotFoundException e) {
-		        				throw new CannotModifyTestMethodException("Cannot modify the method signature because the parameter type could not be found. Embedded exception is: " + e.getMessage());
-		        			} catch (CannotCompileException e) {
-		        				throw new CannotModifyTestMethodException("Cannot modify the method signature because the method could not be compiled. Embedded exception is: " + e.getMessage());
-							}
+		            		if (this.methodVariableToParameterMap.get(match.substring(1)) != null) {
+		            			logger.debug("Variable'{}' exists in map, ignoring...", match);
+		            		} else {		            			
+		            			logger.debug("Variable'{}' DOES NOT exist in map, adding...", match);
+		            			// Add variable to map
+		            			this.methodVariableToParameterMap.put(match.substring(1), type);
+		            				        			
+			        			// Update method signature
+			        			try {
+			        				// Dynamically find type, import into classpool and append the param into the method signature
+			        				logger.debug("Adding parameter to signature: " + param + ":" + match );
+			        				this.classPool.importPackage(type.getPackage().getName());
+			        				this.ctMethod.addParameter(this.classPool.get(type.getName()));		        				
+			        			} catch (NotFoundException e) {
+			        				throw new CannotModifyTestMethodException("Cannot modify the method signature because the parameter type could not be found. Embedded exception is: " + e.getMessage());
+			        			} catch (CannotCompileException e) {
+			        				throw new CannotModifyTestMethodException("Cannot modify the method signature because the method could not be compiled. Embedded exception is: " + e.getMessage());
+								}
+		            		}
 		        			
 		        			// Substitute variables - can't use named parameters as Javassist doesn't support them in methods (you can understand why)
 		        			// Substitute variables with 	[0...n]
@@ -290,8 +296,8 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 		        			// TODO: Why does the next line NOT work but the following does? Interesting...
 		        			//param = param.replace(match, "\" + $args[" + position + "] + \"");
 		        			param = param.replace(match, "\" + $" + position + " + \"");
-		        		}
-		        	}			       
+		        		
+		        	}
 			        // Update param
 			        params[i] = param;
 		        }
@@ -314,49 +320,6 @@ public class JavassistTestBuilderImpl {// implements ITestBuilder {
 		
 		// Loop through the dataset, converting the variables into an Object[][]
 		
-		// The following DOES NOT WORK as Javassist cannot compile a multi-dimensional array here. Doh.
-		
-		/* 
-		int nrCols = this.methodVariableToParameterMap.size();
-		int nrRows = this.dataSet.size();		
-		Object[][] data = new Object[nrRows][nrCols];
-			
-		int row = 0;
-		int col = 0;		
-		for (row = 0; row < nrRows; row++) {
-			Map<String, Object> dataSet = this.dataSet.get(row);			
-			
-			for (Object key : this.methodVariableToParameterMap.keySet()) {
-				try {
-					logger.debug("fetching variable from map: " + key);
-					data[row][col] = dataSet.get(key);
-					logger.debug("fetched value for variable from map: " + dataSet.get(key));
-					col++;
-				} catch(NullPointerException e) {
-					throw new CannotCreateDataProviderException();
-				}
-			}
-		}
-		
- 	 	// Create the @DataProvider method and give it a name that matches the DataProvider created in addTest <methodName>DataProvider
-		String dataRepresentation = "return new Object[][]{\n";
-		for (int i = 0; i < nrRows; i++) {
-			if (i != 0) {
-				dataRepresentation += ",\n";
-			}
-			dataRepresentation += "\t{";
-			for (int j = 0; j < nrCols; j++) {
-				if (j != 0) {
-					dataRepresentation += ",";					
-				}
-				dataRepresentation += "\"" + data[i][j] + "\"";					
-			}
-			dataRepresentation += "}";
-		}
-		dataRepresentation += "\n};";
-		
-		logger.debug("DataProvider object[][] created, and it looks like...: \n" + dataRepresentation);
-		*/
 		
 		// Create an @DataProvider annotation on the method
 		AnnotationsAttribute attr = new AnnotationsAttribute(this.ctClass.getClassFile().getConstPool(), AnnotationsAttribute.visibleTag);

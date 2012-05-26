@@ -2,7 +2,7 @@
  * #%L
  * Lambda Core
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,28 @@
  */
 package au.com.onegeek.lambda;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import au.com.onegeek.lambda.api.TestCommand;
 import au.com.onegeek.lambda.core.CommandRunner;
-import au.com.onegeek.lambda.core.TestCommand;
 
-public class CommandRunnerTests {
+@ContextConfiguration({"classpath:META-INF/spring/test-context.xml"})
+public class CommandRunnerTests extends AbstractTestNGSpringContextTests {
 
-	
+	@Autowired
 	CommandRunner runner;
 	
-	@BeforeClass
-	private void setup() {
-		this.runner = CommandRunner.getInstance();		
-	}	
+//	@BeforeClass
+//	private void setup() {
+//		this.runner = CommandRunner.getInstance();		
+//	}
 	
 	@Test
-	public void testCommandRunner() {		
+	public void testCommandRunner() {
 		TestCommand command = new TestCommand("getBodyText");		
 		runner.runCommand(command);
 

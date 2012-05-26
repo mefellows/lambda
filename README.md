@@ -43,27 +43,27 @@ Supported Operating Systems \ Browsers
 
 <table>
     <tr>
-        <th>Operating System</th><th>Firefox</th><th>Internet Explorer</th><th>Chrome</th><th>HTMLUnit</th>
+        <th>Operating System</th><th>Firefox</th><th>Internet Explorer</th><th>Chrome</th><th>Opera</th><th>HTMLUnit</th>
     </tr>
     <tr>
-        <td>Windows XP</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
+        <td>Windows XP</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
     </tr>
     <tr>
-        <td>Windows Vista (32-bit)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
+        <td>Windows Vista (32-bit)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
     </tr>
     <tr>
-        <td>Windows Vista (64-bit)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
+        <td>Windows Vista (64-bit)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
     </tr>
     <tr>
-        <td>Windows 7 (32-bit)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
+        <td>Windows 7 (32-bit)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
     </tr>
     <tr>
-        <td>Windows 7 (64-bit)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
+        <td>Windows 7 (64-bit)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td>
     </tr>
     <tr>
-        <td>Mac OSX Lion (64-bit)</td><td>yes</td><td>no</td><td>yes</td><td>yes</td>
+        <td>Mac OSX Lion (64-bit)</td><td>yes</td><td>no</td><td>yes</td><td>yes</td><td>yes</td>
     </tr>
     <tr>
-        <td>Linux (32-bit Ubuntu)</td><td>yes</td><td>no</td><td>yes</td><td>yes</td>
+        <td>Linux (32-bit Ubuntu)</td><td>yes</td><td>no</td><td>yes</td><td>yes</td><td>yes</td>
     </tr>
 </table>

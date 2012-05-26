@@ -6,13 +6,17 @@
         <groupId>au.com.onegeek</groupId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../lambda-parent</relativePath>
-    </parent>    
+    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>au.com.onegeek</groupId>
     <artifactId>lambda-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Lambda Core</name>
-    
+
+    <properties>
+        <selenium.version>2.21.0</selenium.version>
+    </properties>
+
     <description>Lambda Core packages for running lambda in a variety of environments</description>
 
     <licenses>
@@ -22,29 +26,45 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    
-    <properties>
-        <org.springframework-version>3.0.5.RELEASE</org.springframework-version>
-        <org.aspectj.version>1.6.6.RELEASE</org.aspectj.version>
-        <org.aspectjrt.version>1.6.6</org.aspectjrt.version>
-    </properties>
 
     <dependencies>
+        <!-- Lambda API -->
+        <dependency>
+            <groupId>au.com.onegeek</groupId>
+            <artifactId>lambda-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- <dependency> -->
+        <!-- <groupId>au.com.onegeek</groupId> -->
+        <!-- <artifactId>lambda-xlsx-parser</artifactId> -->
+        <!-- <version>${project.version}</version> -->
+        <!-- </dependency> -->
+
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>2.7.0</version>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-server</artifactId>
-            <version>2.7.0</version>
+            <artifactId>selenium-api</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-driver</artifactId>
+            <version>${selenium.version}</version>
         </dependency>
 
         <dependency>
+            <groupId>com.opera</groupId>
+            <artifactId>operadriver</artifactId>
+            <version>0.7.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>5.14</version>
+            <version>${testng.version}</version>
         </dependency>
 
         <!-- Spring Libraries for DI -->
@@ -75,74 +95,48 @@
             <artifactId>spring-aspects</artifactId>
             <version>${org.springframework-version}</version>
         </dependency>
+        <!-- AOP for caching -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.aspects</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>com.springsource.org.aspectj.weaver</artifactId>
+            <version>${org.aspectj.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${org.springframework-version}</version>
             <!-- <scope>test</scope> -->
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-instrument</artifactId>
+            <version>3.0.5.RELEASE</version>
+        </dependency>
 
         <!-- Logging -->
-        
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>0.9.18</version>
         </dependency>
-        
-<!--         <dependency> -->
-<!--             <groupId>org.slf4j</groupId> -->
-<!--             <artifactId>slf4j-log4j12</artifactId> -->
-<!--             <version>1.6.1</version> -->
-<!--         </dependency> -->
 
-        <!-- Java Excel parsing -->
-        <!-- Apache POI -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>3.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.7</version>
-        </dependency>
-
-
+        <!-- Dynamic Class Generation -->
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.12.1.GA</version>
         </dependency>
-
-
-
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <target>1.6</target>
-                    <source>1.6</source>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
-                    <forkMode>always</forkMode>
-                    <argLine>
-                        -javaagent:"${settings.localRepository}/org/springframework/spring-instrument/${org.springframework-version}/spring-instrument-${org.springframework-version}.jar"
-                    </argLine>
-                    <useSystemClassloader>true</useSystemClassloader>
-                </configuration>
-            </plugin>
+
         </plugins>
     </build>
 

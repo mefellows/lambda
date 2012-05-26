@@ -2,7 +2,7 @@
  * #%L
  * Lambda CLI
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,8 +119,7 @@ public class LogLevelCmd implements Command {
 
 			if (descriptor != null) {
 				// Extract log level
-				if (descriptor.parameters.logLevel != null) {
-					final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+				if (descriptor.parameters.logLevel != null) {					
 					Level level = null;
 
 					if (descriptor.parameters.logLevel
@@ -143,20 +142,34 @@ public class LogLevelCmd implements Command {
 						level = Level.OFF;
 					}
 
+					this.setGlobalLogLevel(level);
 					
-					for (ch.qos.logback.classic.Logger log : lc.getLoggerList()) {
-						log.setLevel(level);
-					}
+
 				}
 			}
 		}
 
 		return null;
 	}
+	
+	/**
+	 * Set the global log level across the application.
+	 * 
+	 * @param level The level to set the logging at.
+	 */
+	public void setGlobalLogLevel(Level level) {
+		final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();		
+		for (ch.qos.logback.classic.Logger log : lc.getLoggerList()) {
+			log.setLevel(level);
+		}		
+	}
 
 	@Override
 	public void plug(Context plug) {
 		descriptor = new LogLevelDescriptor();
+		
+		// Set the log level to INFO by default
+		this.setGlobalLogLevel(Level.INFO);
 	}
 
 	@Override

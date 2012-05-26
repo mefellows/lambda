@@ -2,7 +2,7 @@
  * #%L
  * Lambda Core
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,21 @@ package au.com.onegeek.lambda.connector;
 
 import org.testng.TestNG;
 
-import au.com.onegeek.lambda.core.IOutputConnector;
-import au.com.onegeek.lambda.core.Test;
+import au.com.onegeek.lambda.api.Context;
+import au.com.onegeek.lambda.api.OutputConnector;
+import au.com.onegeek.lambda.api.Test;
 
-public class QcConnector implements IOutputConnector {
+public class QcConnector implements OutputConnector {
 
 	@Override
 	public boolean publish(TestNG testng, Test[] tests) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void start(Context context) {
+		// TODO Auto-generated method stub
+		
 	}
 }

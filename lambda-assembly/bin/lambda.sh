@@ -60,6 +60,7 @@ CLAMSHELL_PROPS="-Dkey.dir.conf=$LAMBDA_HOME/conf -Dkey.dir.plugins=$LAMBDA_HOME
 
 # Lambda bootstrap
 java \
+ -javaagent:$LAMBDA_HOME/lib/spring-instrument-3.0.5.RELEASE.jar \
  -classpath $CLASSPATH \
  $CHROME_DRIVER \
  $CLAMSHELL_PROPS \

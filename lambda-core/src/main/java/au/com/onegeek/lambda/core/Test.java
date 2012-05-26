@@ -2,7 +2,7 @@
  * #%L
  * Lambda Core
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,10 @@ package au.com.onegeek.lambda.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
+import au.com.onegeek.lambda.api.TestCommand;
 
 /**
  * Test Abstract Class.
@@ -31,14 +35,17 @@ import org.slf4j.LoggerFactory;
  * @author Matt Fellows <matt.fellows@onegeek.com.au>
  *
  */
-public abstract class Test {
+@Configurable
+public abstract class Test implements au.com.onegeek.lambda.api.Test {
 	private static final Logger logger = LoggerFactory.getLogger(Test.class);
 	
 	// @TODO: can this be springyfied?
+	@Autowired
 	protected CommandRunner runner;
 	
 	public Test() {
-		runner = CommandRunner.getInstance();
+//		runner = CommandRunner.getInstance();
+		logger.info("runner is null?" + (runner == null));
 	}
 	
 	/**
@@ -47,7 +54,8 @@ public abstract class Test {
 	 * @param keyword The name of the keyword (method) to call.
 	 * @param params The set of parameters to pass in.
 	 */
-	protected void executeCommand(String keyword, Object...params) {
+	public void executeCommand(String keyword, Object...params) {
+		logger.info("Running command: " + keyword);
 		TestCommand command = new TestCommand(keyword, params);
 		runner.runCommand(command);
 	}
@@ -59,8 +67,9 @@ public abstract class Test {
 	 * 
 	 * @param keyword
 	 */
-	protected void executeCommand(String keyword) {
+	public void executeCommand(String keyword) {
 		TestCommand command = new TestCommand(keyword);
+		logger.info("Running command: " + keyword);
 		runner.runCommand(command);
 	}
 }

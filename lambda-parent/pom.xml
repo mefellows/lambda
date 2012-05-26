@@ -33,10 +33,17 @@
 
     <properties>
         <clamshell.version>0.1</clamshell.version>
+        <testng.version>5.14</testng.version>
+        <org.springframework-version>3.0.5.RELEASE</org.springframework-version>
+        <org.aspectj.version>1.6.6.RELEASE</org.aspectj.version>
+        <org.aspectjrt.version>1.6.6</org.aspectjrt.version>
+        <selenium.version>2.12.0</selenium.version>  
     </properties>
 
     <modules>
+        <module>../lambda-api</module>
         <module>../lambda-core</module>
+        <module>../lambda-xlsx-parser</module>
         <module>../lambda-cli</module>
         <module>../lambda-splash</module>
         <module>../lambda-assembly</module>
@@ -124,6 +131,48 @@
     <build>
         <pluginManagement>
             <plugins>
+                <!--This plugin's configuration is used to store Eclipse 
+                    m2e settings only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>aspectj-maven-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>test-compile</goal>
+                                            <goal>compile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>
+                                            license-maven-plugin
+                                        </artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>update-file-header</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>            
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
@@ -138,6 +187,26 @@
                         </descriptors>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <target>1.6</target>
+                        <source>1.6</source>
+                    </configuration>
+                </plugin>                
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.4.3</version>
+                    <configuration>
+                        <forkMode>always</forkMode>
+                        <argLine>
+                            -javaagent:"${settings.localRepository}/org/springframework/spring-instrument/${org.springframework-version}/spring-instrument-${org.springframework-version}.jar"
+                        </argLine>
+                        <useSystemClassloader>true</useSystemClassloader>
+                    </configuration>
+                </plugin>                
             </plugins>
         </pluginManagement>
         <plugins>
@@ -170,12 +239,17 @@
             </plugin>
         </plugins>
     </build>
-
+    
     <distributionManagement>
         <repository>
             <id>onegeek</id>
             <name>OneGeek Maven Repository</name>
-            <url>scp://onegeek.com.au/home/onegeekd/www/repo.onegeek.com.au</url>
+            <url>scp://onegeek.com.au/home/onegeekd/www/repo.onegeek.com.au/releases</url>
         </repository>
+        <snapshotRepository>
+            <id>onegeek</id>
+            <name>OneGeek Maven Repository</name>
+            <url>scp://onegeek.com.au/home/onegeekd/www/repo.onegeek.com.au/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>

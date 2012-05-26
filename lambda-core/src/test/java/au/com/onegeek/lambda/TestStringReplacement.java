@@ -2,7 +2,7 @@
  * #%L
  * Lambda Core
  * %%
- * Copyright (C) 2011 null
+ * Copyright (C) 2011 OneGeek
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,26 +19,14 @@
  */
 package au.com.onegeek.lambda;
 
-import java.lang.reflect.Method;
 import java.text.NumberFormat;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.util.SystemOutLogger;
-
 import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.CtNewMethod;
-import javassist.CtField.Initializer;
 import javassist.NotFoundException;
-
-import au.com.onegeek.lambda.core.TestCommand;
-import au.com.onegeek.lambda.core.exception.VariableNotFoundException;
+import au.com.onegeek.lambda.api.TestCommand;
 
 public class TestStringReplacement {
 
