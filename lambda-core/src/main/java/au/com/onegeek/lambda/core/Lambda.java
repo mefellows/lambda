@@ -19,15 +19,20 @@
  */
 package au.com.onegeek.lambda.core;
 
+// 
+// test -h http://ote.retail.melbourneit.com.au -d /Users/mfellows/development/lambda/lambda-core/src/main/resources/tests.xlsx -f /Users/mfellows/development/lambda/lambda-core/src/main/resources/tests.xlsx -b chrome
 //test -f /Users/mfellows/development/lambda/lambda-assembly/target/lambda-0.0.1-SNAPSHOT-clamshell-assembly/examples/retail.xlsx -b chrome -e http://ote.retail.melbourneit.com.au
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,9 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 
 import au.com.onegeek.lambda.api.AssertionProvider;
@@ -161,24 +164,6 @@ public class Lambda {
 	@Autowired
 	private Context context;
 
-	//private Lambda() {
-	private Lambda() {
-		
-	}
-
-//	public static Lambda getInstance() {
-//		if (instance == null) {
-//			instance = new Lambda();
-//		}
-//		return instance;
-//	}
-
-	public static void main(String[] args) throws UnableToParseTestsException,
-			UnableToParseDataException, ProviderNotFoundException {
-//		Lambda lambda = Lambda.getInstance();
-//		lambda.run();
-	}
-
 	/**
 	 * Gets the last instance of ClassLoader created, otherwise it creates one.
 	 * Internally, it setups a class loader for the path specified in property
@@ -250,6 +235,14 @@ public class Lambda {
 
 		// Initialise connections with the connectors
 
+		
+		// Update context with Selenium
+		context.setDriver(driver);
+		
+		// Initialize plugins
+		for (Plugin p: this.plugins) {
+			p.start(context);
+		}
 	}
 
 	protected void importTests() throws Exception {
@@ -335,6 +328,8 @@ public class Lambda {
 //		this.importPlugins();
 	}
 
+	
+	// TODO: Refactor this so that all the plugins and stuff happen in an init method. Pass around the Config object to remove the state from THIS application.
 	public void run() throws UnableToParseTestsException,
 			UnableToParseDataException, ProviderNotFoundException {
 		// Read config
@@ -388,18 +383,74 @@ public class Lambda {
 			throw new ProviderNotFoundException(e.getMessage());
 		}
 
+		
+		logger.info("Running non Testng Tests");
+		for (Class<Test> clazz: tests) {
+			Test test = null;
+			try {
+				test = clazz.newInstance();
+			} catch (InstantiationException e) {
+				logger.info("Could not instantiate the Test class: " + e.getMessage());
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				logger.info("Could not instantiate the Test class: " + e.getMessage());
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			for (Method m: clazz.getMethods()) {
+				org.testng.annotations.Test testAnnotation = m.getAnnotation(org.testng.annotations.Test.class);
+				if (testAnnotation != null) {
+					logger.info("Runing test with name: " + m.getName());
+					// Crap - how do we do variables? TestNG has @DataProviders, can we leverage this?
+					String dataProviderMethodName = testAnnotation.dataProvider();
+					if (dataProviderMethodName != null) {
+						Method dataProvidermethod = null;
+						try {
+							dataProvidermethod = clazz.getDeclaredMethod(dataProviderMethodName);
+							Object[][] data = (Object[][]) dataProvidermethod.invoke(test);
+							for (Object[] array: data) {
+								m.invoke(test, array);
+							}
+						} catch (SecurityException e) {
+							logger.info("Could not instantiate the DataProvider method SE: " + e.getMessage());
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NoSuchMethodException e) {
+							logger.info("Could not instantiate the DataProvider method NSME: " + e.getMessage());
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							logger.info("Could not instantiate the Test class IAE: " + e.getMessage());
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							logger.info("Could not instantiate the Test class IAE: " + e.getMessage());
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							logger.info("Could not instantiate the Test class ITE: " + e.getMessage());
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
 		// Create TestNG objects
+		/*
 		logger.info("Starting TestNG Instance");
 		this.testng = new TestNG();
 		testng.setVerbose(10);
 		TestListenerAdapter tla = new TestListenerAdapter();
+		
 		testng.setTestClasses(this.tests);
 		testng.addListener(tla);
 
 		// Run the TestNG suite
 		logger.info("Running Tests");
 		testng.run();
-
+*/
 
 		this.shutdown();
 
@@ -414,11 +465,19 @@ public class Lambda {
 	private void shutdown() {
 		// Close down browsers etc.
 
-		// Is this order correct?
-		selenium.stop();
-		driver.quit();
-		selenium = null;
-		driver = null;		
+		try {
+			// Is this order correct?
+			selenium.stop();
+			driver.quit();
+			selenium = null;
+			driver = null;
+		} catch (Exception e) {
+			logger.debug("Browser shutdown wasn't completely successful. This seems to happen with the Chrome driver so don't be too disheartened.");
+		}
+		
+		// Close down stateful objects 
+		this.dataSet = null;//new LinkedList<Map<String,Object>>();
+		this.tests = null;
 	}
 
 	public Class<Test>[] getTests() {

@@ -52,12 +52,7 @@ import au.com.onegeek.lambda.api.TestCommand;
 public class CommandRunner {
 	private static final Logger logger = LoggerFactory.getLogger(CommandRunner.class);
 	
-	// Use annotations instead of interfaces -> any existing class may be used :)
-	
-	/**
-	 * Singleton instance.
-	 */
-	private static CommandRunner _instance;
+	// TODO: Use annotations instead of interfaces -> any existing class may be used :)
 
 	@Autowired
 	private Lambda lambda;

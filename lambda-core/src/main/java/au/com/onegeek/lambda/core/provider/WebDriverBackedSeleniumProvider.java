@@ -29,6 +29,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import au.com.onegeek.lambda.api.AssertionProvider;
 import au.com.onegeek.lambda.api.Context;
@@ -43,7 +49,7 @@ import au.com.onegeek.lambda.api.Plugin;
  * @author Matt Fellows <matt.fellows@onegeek.com.au>
  *
  */
-public class WebDriverBackedSeleniumProvider extends WebDriverBackedSelenium implements AssertionProvider, Plugin {
+public class WebDriverBackedSeleniumProvider extends WebDriverBackedSelenium implements AssertionProvider, Plugin, BeanDefinitionRegistryPostProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(WebDriverBackedSeleniumProvider.class);
 	
 	public WebDriverBackedSeleniumProvider(WebDriver baseDriver, String baseUrl) {
@@ -88,5 +94,28 @@ public class WebDriverBackedSeleniumProvider extends WebDriverBackedSelenium imp
 	@Override
 	public void start(Context context) {
 		logger.info("Starting Plugin: " + this.getClass().getName());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.config.BeanFactoryPostProcessor#postProcessBeanFactory(org.springframework.beans.factory.config.ConfigurableListableBeanFactory)
+	 */
+	@Override
+	public void postProcessBeanFactory(
+			ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor#postProcessBeanDefinitionRegistry(org.springframework.beans.factory.support.BeanDefinitionRegistry)
+	 */
+	@Override
+	public void postProcessBeanDefinitionRegistry(
+			BeanDefinitionRegistry registry) throws BeansException {
+	    BeanDefinition definition = new RootBeanDefinition(
+	    		WebDriverBackedSeleniumProvider.class);
+
+	    logger.info("registering SeleniumBackedWebDriver bean...");
+	    registry.registerBeanDefinition("webDriverBackedSeleniumProvider", definition);		
 	}	
 }

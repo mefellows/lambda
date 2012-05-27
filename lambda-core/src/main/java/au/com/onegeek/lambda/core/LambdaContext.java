@@ -21,6 +21,7 @@ package au.com.onegeek.lambda.core;
 
 import java.util.List;
 
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,8 @@ import au.com.onegeek.lambda.api.TestProvider;
 @Component
 public class LambdaContext implements Context {
 	private static final Logger logger = LoggerFactory.getLogger(LambdaContext.class);
+	
+	private WebDriver driver;
 	
 	public LambdaContext() {
 		logger.debug("LambdaContext starting...");
@@ -73,9 +76,25 @@ public class LambdaContext implements Context {
 	}
 
 	@Override
-	public List<OutputConnector> getIOutputConnectors() {
+	public List<OutputConnector> getOutputConnectors() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.com.onegeek.lambda.api.Context#getDriver()
+	 */
+	@Override
+	public WebDriver getDriver() {
+		return this.driver;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.com.onegeek.lambda.api.Context#setDriver(org.openqa.selenium.WebDriver)
+	 */
+	@Override
+	public void setDriver(WebDriver driver) {
+		// TODO Auto-generated method stub
+		this.driver = driver;
+	}
 }

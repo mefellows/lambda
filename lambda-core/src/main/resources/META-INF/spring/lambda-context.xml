@@ -23,8 +23,8 @@
     
 <!--     <bean id="dataProvider" class="au.com.onegeek.lambda.parser.Excel2SeleniumParser" /> -->
 <!--     <bean id="testProvider" class="au.com.onegeek.lambda.parser.Excel2SeleniumParser" /> -->
-<!--     <context:spring-configured /> -->
-<!--     <context:load-time-weaver aspectj-weaving="autodetect"/> -->
+    <context:spring-configured />
+    <context:load-time-weaver />
 
 
     <!-- Web Driver bean - controls which browser to run the tests in -->

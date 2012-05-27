@@ -30,6 +30,7 @@ package au.com.onegeek.lambda.core;
  * @author Matt Fellows <matt.fellows@onegeek.com.au>
  */
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -57,7 +58,7 @@ import au.com.onegeek.lambda.api.exception.CannotCreateTestClassException;
 import au.com.onegeek.lambda.api.exception.CannotModifyTestMethodException;
 import au.com.onegeek.lambda.api.exception.VariableNotFoundException;
 
-public class JavassistTestBuilderImpl {// implements TestBuilder {
+public class JavassistTestBuilderImpl {
 	private static final Logger logger = LoggerFactory.getLogger(JavassistTestBuilderImpl.class);
 	
 	/**
@@ -86,8 +87,18 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 	 * 
 	 * Used to create <code>@DataProvider</code> annotations for test methods.
 	 */
-	private LinkedHashMap<String, Object> methodVariableToParameterMap;
+	private LinkedHashMap<String, Object> methodVariableToParameterMap = new LinkedHashMap<String, Object>();
 
+	/**
+	 * The ordered set of types for the test methods. Must match up with the DataProvider Object[][].
+	 */
+	private List<Class> signatureTypes = new LinkedList<Class>();
+	
+	/**
+	 * In Progress statements to add to test method. To be added after signature is created.
+	 */
+	private List<String> commandsToAdd = new LinkedList<String>();
+	
 	/**
 	 * The compiled class object. The compilation can only happen once.
 	 * 
@@ -164,6 +175,61 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 		}
 	}
 	
+	private void completeMethod() throws CannotModifyTestMethodException, CannotCompileException, NotFoundException {
+		logger.info("completing any in flight methods...");
+		if (this.ctMethod != null) {
+			logger.info("completing in flight method: " + this.ctMethod.getName());
+			
+			// Update method signature
+			for (Class type: signatureTypes) {
+				// Signature MUST be the same across ALL tests due to limitations in the
+				// library (needs to call a static method on THIS class to retrieve data)
+				try {
+					// Dynamically find type, import into classpool and append the param into the method signature
+					logger.debug("Adding parameter of type " + type + " to method signature: " + this.ctMethod.getName());
+					this.classPool.importPackage(type.getPackage().getName());
+					this.ctMethod.addParameter(this.classPool.get(type.getName()));
+				} catch (NotFoundException e) {
+					throw new CannotModifyTestMethodException("Cannot modify the method signature because the parameter type could not be found. Embedded exception is: " + e.getMessage());
+				} catch (CannotCompileException e) {
+					throw new CannotModifyTestMethodException("Cannot modify the method signature because the method could not be compiled. Embedded exception is: " + e.getMessage());
+				}
+			}
+			
+			// Bring other method signatures up to speed with any new params
+			// Note: This can't be done at the end of all methods as the method bodies
+			//       may refer to signature variables which don't yet exist 
+			for (CtMethod m: this.ctClass.getMethods()) {
+				if (m.getName().startsWith("test") && !m.getName().contains("DataProvider")) {
+					// Add any additional parameters to signature if missing
+					int count = m.getParameterTypes().length;
+					logger.debug("Method '" + m.getName() + "' has " + count + " parameters");
+					logger.debug("Signature map has " + this.signatureTypes.size() + " types. Need to add additional " + (this.signatureTypes.size() - count) + " params");
+					
+					
+					for (int i = count; i < this.signatureTypes.size(); i++) {
+							Class type = this.signatureTypes.get(i);
+							logger.debug("Adding parameter of type " + type + " to previous method signature to ensure consistent method signature: " + this.ctMethod.getName());
+							this.classPool.importPackage(type.getPackage().getName());
+							m.addParameter(this.classPool.get(type.getName()));
+					}
+				}
+			}			
+			
+			// Add commands to Test
+			for (String commandString: this.commandsToAdd) {
+				logger.debug("Adding command to method with body: {}", commandString);
+				this.ctMethod.insertAfter(commandString);
+			}
+			
+			// Reset temp vars - dataSet, ctMethod ...
+			this.ctMethod = null;
+			//this.methodVariableToParameterMap = new LinkedHashMap<String, Object>();			
+			// Reset commands for next method
+			this.commandsToAdd = new LinkedList<String>();
+		}
+	}
+	
 	/**
 	 * Create a new method on the Test Class with the given name.
 	 * 
@@ -174,12 +240,11 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 	 * @throws CannotCompileException 
 	 * @throws NotFoundException 
 	 * @throws VariableNotFoundException 
+	 * @throws CannotModifyTestMethodException 
 	 */
-	public void addTest(String testMethodName) throws CannotCompileException, NotFoundException, VariableNotFoundException {
-		
-		// Reset temp vars - dataSet, ctMethod ...
-		this.ctMethod = null;
-		this.methodVariableToParameterMap = new LinkedHashMap<String, Object>();
+	public void addTest(String testMethodName) throws CannotCompileException, NotFoundException, VariableNotFoundException, CannotModifyTestMethodException {
+		// Close off previous Method
+		this.completeMethod();
 		
 		// Create an @Test annotation on the methods to fire
 		AnnotationsAttribute attr = new AnnotationsAttribute(this.ctClass.getClassFile().getConstPool(), AnnotationsAttribute.visibleTag);
@@ -205,7 +270,7 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 	/**
 	 * Appends the code to execute a <code>TestCommand</code> into the last method added to the class. 
 	 *
-	 * @param command The command to execute as part of the test case.
+	 * @param command The command to execute as part of the test case containing unparsed variables
 	 * @throws CannotModifyTestMethodException
 	 * @throws CannotCompileException
 	 * @throws VariableNotFoundException
@@ -216,8 +281,10 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 
 		// Add command to Test class
 		String commandString = this.implodeCommandString(command);
-		logger.debug("Adding command to method with body: {}", commandString);
-		this.ctMethod.insertAfter(commandString);
+
+		// Add tests to method en-mass
+		logger.info("Adding command body: '" + commandString + "' to list of commands to append to test method body");
+		this.commandsToAdd.add(commandString);
 	}
 	
 	/**
@@ -269,18 +336,10 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 		            			logger.debug("Variable'{}' DOES NOT exist in map, adding...", match);
 		            			// Add variable to map
 		            			this.methodVariableToParameterMap.put(match.substring(1), type);
+		            			this.signatureTypes.add(type);
 		            				        			
-			        			// Update method signature
-			        			try {
-			        				// Dynamically find type, import into classpool and append the param into the method signature
-			        				logger.debug("Adding parameter to signature: " + param + ":" + match );
-			        				this.classPool.importPackage(type.getPackage().getName());
-			        				this.ctMethod.addParameter(this.classPool.get(type.getName()));		        				
-			        			} catch (NotFoundException e) {
-			        				throw new CannotModifyTestMethodException("Cannot modify the method signature because the parameter type could not be found. Embedded exception is: " + e.getMessage());
-			        			} catch (CannotCompileException e) {
-			        				throw new CannotModifyTestMethodException("Cannot modify the method signature because the method could not be compiled. Embedded exception is: " + e.getMessage());
-								}
+		            			// Previously updated method signature here, but have had to refactor as
+		            			// method signatures can't differ across tests
 		            		}
 		        			
 		        			// Substitute variables - can't use named parameters as Javassist doesn't support them in methods (you can understand why)
@@ -310,6 +369,9 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 	/**
 	 * Add a <code>DataProvider</code> to the last method so that it will 
 	 * 
+	 * Create a new field, and initialize it with the array of data from the variables listed in the variabes array
+	 * Uses the {@link JavassistTestBuilderImpl#getData(Object, String[], Object[]) method of this class}
+	 * 
 	 * @throws CannotCompileException
 	 * @throws CannotCreateDataProviderException
 	 * @throws NotFoundException
@@ -319,8 +381,7 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 		String fieldName = "_" + this.ctMethod.getName() + "DataProvider";
 		
 		// Loop through the dataset, converting the variables into an Object[][]
-		
-		
+
 		// Create an @DataProvider annotation on the method
 		AnnotationsAttribute attr = new AnnotationsAttribute(this.ctClass.getClassFile().getConstPool(), AnnotationsAttribute.visibleTag);
 		Annotation annot = new Annotation("org.testng.annotations.DataProvider", this.ctClass.getClassFile().getConstPool());
@@ -378,6 +439,9 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 	 * This method will be invoked when the Test object is created, so it's
 	 * necessary that both the dataSet it's referring to is consistent and
 	 * the variables names don't change.
+	 * 
+	 * NOTE: This has the side-effect that only 1 data provider can exist! So
+	 * all methods in the test must have the same signature.
 	 * 
 	 * @param obj  The current Javassist compile-in-progress Test class.
 	 * @param keys The set of variable names in order to put into the data set.
@@ -497,15 +561,27 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 	 * 
 	 * @return
 	 * @throws CannotCreateTestClassException
+	 * @throws CannotModifyTestMethodException 
+	 * @throws CannotCompileException 
+	 * @throws NotFoundException 
 	 */
 	@SuppressWarnings("unchecked")
-	public Class<Test> getCreatedClass() throws CannotCreateTestClassException {
+	public Class<Test> getCreatedClass() throws CannotCreateTestClassException, CannotModifyTestMethodException, CannotCompileException, NotFoundException {	
+		this.completeMethod();		
+		
 		if (this.clazz != null) {
 			return this.clazz;
 		}
 		try {
 			this.clazz = this.ctClass.toClass();
-			return clazz;
+			ctMethod = null;			
+			methodVariableToParameterMap = new LinkedHashMap<String, Object>();
+			signatureTypes = new LinkedList<Class>();
+			commandsToAdd = new LinkedList<String>();
+			
+			Class<Test> retClazz = clazz;
+			this.clazz = null;
+			return retClazz;
 		} catch (CannotCompileException e) {
 			e.printStackTrace();
 			throw new CannotCreateTestClassException("Cannot compile test class using Jassist. Embedded exception: " + e.getMessage());
@@ -521,11 +597,17 @@ public class JavassistTestBuilderImpl {// implements TestBuilder {
 	 * @return
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
+	 * @throws CannotCompileException 
+	 * @throws NotFoundException 
 	 */
-	public Test getObjectInstance() throws InstantiationException, IllegalAccessException {
+	public Test getObjectInstance() throws InstantiationException, IllegalAccessException, CannotCompileException, NotFoundException {
 		Test obj;
 		try {
 			obj = (Test) this.getCreatedClass().newInstance();
+		} catch (CannotModifyTestMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();		
+			throw new InstantiationException("Unable to create test class object. Embedded exception: " + e.getMessage());
 		} catch (CannotCreateTestClassException e) {
 			throw new InstantiationException("Unable to create test class object. Embedded exception: " + e.getMessage());
 		}

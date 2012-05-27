@@ -20,6 +20,7 @@
     <context:load-time-weaver aspectj-weaving="autodetect"/>
     
     <bean id="commandRunner" class="au.com.onegeek.lambda.core.CommandRunner" init-method="init" />
-    <bean id="pluginClassLoader" class="au.com.onegeek.lambda.MavenClasspathPluginClassloader" />
+    <bean id="lambda" class="au.com.onegeek.lambda.core.Lambda" init-method="init" />
+    <bean id="pluginClassLoader" class="au.com.onegeek.lambda.core.MavenClasspathPluginClassloader" />
    
 </beans>

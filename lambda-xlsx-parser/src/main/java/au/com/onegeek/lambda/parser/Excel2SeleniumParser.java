@@ -165,11 +165,14 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
 
 				        		// Create new Test CASE
 				        		try {				        			
-				        			// Create new test case
 									builder.addTest(cellValue);
 									testCaseInProgress = true;
+									dataProviderAdded = false;
+				        		} catch (CannotModifyTestMethodException e) {
+				        			e.printStackTrace();
+				        			throw new CannotCreateTestClassException("Could not create Test Class as there was a variable not found in test assertion. Embedded exception: " + e.getMessage());
 								} catch (VariableNotFoundException e) {
-									// TODO Auto-generated catch block
+									e.printStackTrace();
 									throw new CannotCreateTestClassException("Could not create Test Class as there was a variable not found in test assertion. Embedded exception: " + e.getMessage());
 								}
 				        		break;
@@ -186,7 +189,7 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
 		        	} else {		        		
 						// Blank row could mean a test case has just been completed
 						// Complete last test case by adding a data provider
-	        			if (testCaseInProgress && dataProviderAdded == false) {
+	        			if (testCaseInProgress && !dataProviderAdded) {
 	        				try {
 	        					logger.debug("In Progress Test Case now being closed off and added to class...");
 	        					builder.addDataProvider();
@@ -211,9 +214,10 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
 		        }
 				// Blank row could mean a test case has just been completed
 				// Complete last test case by adding a data provider
-    			if (testCaseInProgress && dataProviderAdded == false) {
+		        logger.debug("End of rows...Checking if In Progress Test Case now being closed off and added to class...");
+    			if (testCaseInProgress && !dataProviderAdded) {
+    				logger.debug(" In Progress Test Case now being closed off and added to class...");
     				try {
-    					logger.debug("In Progress Test Case now being closed off and added to class...");
     					builder.addDataProvider();
     					dataProviderAdded = true;
     					logger.debug("In Progress Test Case now closed off!");
@@ -224,7 +228,12 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
     			
 		        if (testCaseInProgress) {
 		        	logger.debug("Generating class file");
-		        	this.tests.add(builder.getCreatedClass());
+		        	try {
+						this.tests.add(builder.getCreatedClass());
+					} catch (CannotModifyTestMethodException e) {
+						e.printStackTrace();
+						throw new CannotCreateTestClassException("Could not create Test case as a DataProvider for the method could not be created. Embedded exception: " + e.getMessage());
+					}
 		        	testCaseInProgress = false;
 		        }
 	        }
@@ -251,8 +260,7 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
         			for (Object[] obs: data) {
         				for (Object o: obs) {
         					logger.info("data value: " + o);
-        				}
-        				
+        				}        				
         			}
         		}
         	}
@@ -273,7 +281,7 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
 			e.printStackTrace();
 		} catch (CannotCreateTestClassException e) {
 			logger.info("cctc e dataMap");
-			e.printStackTrace();			
+			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			logger.info("illa e dataMap");

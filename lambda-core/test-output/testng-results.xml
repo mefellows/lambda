@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="27394" started-at="2012-05-26T16:47:02Z" finished-at="2012-05-26T16:47:30Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="27394" started-at="2012-05-26T16:47:02Z" finished-at="2012-05-26T16:47:30Z">
+      <class name="au.com.onegeek.lambda.BrowserFactoryTest">
+        <test-method status="PASS" signature="testBrowserFactory()[pri:0, instance:au.com.onegeek.lambda.BrowserFactoryTest@3b3e0aba]" name="testBrowserFactory" duration-ms="27383" started-at="2012-05-26T16:47:02Z" finished-at="2012-05-26T16:47:30Z">
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>

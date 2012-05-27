@@ -28,6 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.util.Assert;
 
 import au.com.onegeek.lambda.api.exception.UnableToParseDataException;
@@ -207,7 +211,9 @@ public class LambdaCmd implements Command {
 	@Override
 	public void plug(Context plug) {
 		descriptor = new LambdaDescriptor();
-		//this.lambda = Lambda.getInstance();
+		
+		ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/lambda-context.xml");
+		this.lambda = context.getBean(Lambda.class); 
 		
 		Assert.notNull(this.lambda, "Lambda has not been Autowired");
 	}

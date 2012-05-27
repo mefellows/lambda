@@ -30,8 +30,14 @@ import au.com.onegeek.lambda.core.Test;
  */
 public class DummyTest extends Test {
 
-	public DummyTest() {
-		
+	/**
+	 * @throws InterruptedException
+	 */
+	public DummyTest() throws InterruptedException {
+		super();
+		// TODO Auto-generated constructor stub
 	}
+
+
 	
 }

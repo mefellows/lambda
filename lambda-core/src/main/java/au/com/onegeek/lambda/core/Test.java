@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.Assert;
 
 import au.com.onegeek.lambda.api.TestCommand;
 
@@ -35,7 +38,7 @@ import au.com.onegeek.lambda.api.TestCommand;
  * @author Matt Fellows <matt.fellows@onegeek.com.au>
  *
  */
-@Configurable
+@Configurable()
 public abstract class Test implements au.com.onegeek.lambda.api.Test {
 	private static final Logger logger = LoggerFactory.getLogger(Test.class);
 	
@@ -43,10 +46,22 @@ public abstract class Test implements au.com.onegeek.lambda.api.Test {
 	@Autowired
 	protected CommandRunner runner;
 	
-	public Test() {
+//	public Test() throws InterruptedException {
 //		runner = CommandRunner.getInstance();
-		logger.info("runner is null?" + (runner == null));
-	}
+		
+//		logger.info("********* CommandRunner: About to load spring context");
+//		Thread.sleep(1000);
+//		ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/lambda-context.xml");
+//		this.runner = context.getBean(CommandRunner.class);
+//		Lambda lambda = context.getBean(Lambda.class);
+//		lambda.init();
+//		logger.info("********* CommandRunner: About to check if runner is null ");
+//		Thread.sleep(1000);
+		
+//		Assert.notNull(this.runner, "Runner has not been Autowired");
+//		
+//		logger.info("runner is null?" + (runner == null));
+//	}
 	
 	/**
 	 * Execute an arbitrary command from a Test Assertion Implementation. 

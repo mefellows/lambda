@@ -14,7 +14,9 @@
        configuration file so that this file can easily be used
        for integration testing outside of an OSGi environment -->
 
-    <context:component-scan base-package="au.com.onegeek.lambda.cli"/>
+    <context:component-scan base-package="au.com.onegeek.lambda"/>
     <context:spring-configured/>
     <context:load-time-weaver/>
+    
+<!--         <import resource="classpath:META-INF/spring/lambda-context.xml"/> -->
 </beans>

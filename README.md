@@ -16,7 +16,7 @@ Install Lambda - Windows
     cd lambda-<release>
     start bin/wlambda.bat
     
-Install the Selenium CVS export format
+Install the Selenium CSV export format
 --------------------------------------
 To install the Selenium IDE CSV Exporter do the following:
 

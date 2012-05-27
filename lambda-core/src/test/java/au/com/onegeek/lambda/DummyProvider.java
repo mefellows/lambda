@@ -71,7 +71,13 @@ public class DummyProvider implements Plugin, TestProvider, DataProvider {
 		
 		List<Class> tests = new ArrayList<Class>();
 		
-		Test t = new DummyTest();
+		Test t = null;
+		try {
+			t = new DummyTest();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		tests.add(t.getClass());
 		
 		return tests.toArray(new Class[tests.size()]);

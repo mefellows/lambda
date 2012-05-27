@@ -13,10 +13,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>Lambda Core</name>
 
-    <properties>
-        <selenium.version>2.21.0</selenium.version>
-    </properties>
-
     <description>Lambda Core packages for running lambda in a variety of environments</description>
 
     <licenses>
@@ -34,12 +30,7 @@
             <artifactId>lambda-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- <dependency> -->
-        <!-- <groupId>au.com.onegeek</groupId> -->
-        <!-- <artifactId>lambda-xlsx-parser</artifactId> -->
-        <!-- <version>${project.version}</version> -->
-        <!-- </dependency> -->
-
+        
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>

@@ -6,9 +6,7 @@
         <groupId>au.com.onegeek</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>au.com.onegeek</groupId>
     <artifactId>lambda-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>Lambda Core API</name>
     <description>Lambda Core API</description>
 
@@ -18,5 +16,20 @@
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-api</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>        
     </dependencies>
 </project>

@@ -21,6 +21,8 @@ package au.com.onegeek.lambda.api;
 
 import java.util.List;
 
+import org.openqa.selenium.WebDriver;
+
 /**
  * Lambda Context.
  * 
@@ -41,5 +43,9 @@ public interface Context {
 	
 	public List<TestProvider> getTestProviders();
 
-	public List<OutputConnector> getIOutputConnectors();
+	public List<OutputConnector> getOutputConnectors();
+	
+	public WebDriver getDriver();
+	
+	public void setDriver(WebDriver driver);
 }

@@ -75,15 +75,15 @@ public class TestFactoryTests {
 		
 		
 		// Running TestNG inside of TestNG
-		logger.info("Setting up TestNG");
-		TestNG testng = new TestNG();
-		testng.setVerbose(10);
-		TestListenerAdapter tla = new TestListenerAdapter();
-		testng.setTestClasses(new Class[]{f.getCreatedClass()});
-		testng.addListener(tla);
-				
-		// Run the TestNG suite
-		logger.info("Running Tests");
-		testng.run();
+//		logger.info("Setting up TestNG");
+//		TestNG testng = new TestNG();
+//		testng.setVerbose(10);
+//		TestListenerAdapter tla = new TestListenerAdapter();
+//		testng.setTestClasses(new Class[]{f.getCreatedClass()});
+//		testng.addListener(tla);
+//				
+//		// Run the TestNG suite
+//		logger.info("Running Tests");
+//		testng.run();
 	}
 }
