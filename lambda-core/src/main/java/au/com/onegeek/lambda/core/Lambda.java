@@ -182,7 +182,7 @@ public class Lambda {
 	 * @return List <Plugin>
 	 */
 	public List<Plugin> getPlugins() {
-		logger.info("get plugins ");
+		logger.debug("get plugins ");
 		if (plugins != null) {
 			return plugins;
 		}
@@ -219,15 +219,12 @@ public class Lambda {
 
 		if (logger.isDebugEnabled()) {
 			for (Plugin p : this.plugins) {
-				logger.debug("Found Plugin with name: : " + p.getClass().getName());
+				logger.info("Loaded Plugin: " + p.getClass().getName());
 			}
 		}
 		
 		// Find assertion modules
 		this.assertionProviders = this.getPluginsByType(AssertionProvider.class);
-		
-		Assert.notNull(this.selenium, "Selenium must not be null");
-		this.assertionProviders.add(this.selenium);
 		this.dataProviders = this.getPluginsByType(DataProvider.class);
 		this.testProviders = this.getPluginsByType(TestProvider.class);
 		
@@ -257,7 +254,7 @@ public class Lambda {
 
 		// TODO: lookup input type and match parser against parser registry
 		if (this.tests == null) {
-			logger.info("Creating Tests");
+			logger.debug("Creating Tests");
 			try {
 				extension = testSuiteFilename.substring(this.testSuiteFilename.lastIndexOf('.')+1);
 				logger.debug("Extension: " + extension);
@@ -297,7 +294,7 @@ public class Lambda {
 
 		// TODO: lookup input type and match parser against parser registry
 		if (this.dataSet == null) {
-			logger.info("Creating Dataset");
+			logger.debug("Creating Dataset");
 			if (this.dataSetFilename != null) {
 				try {
 					extension = dataSetFilename.substring(this.dataSetFilename.lastIndexOf('.')+1);
@@ -325,7 +322,7 @@ public class Lambda {
 	}
 	
 	public void init() {
-//		this.importPlugins();
+		this.importPlugins();
 	}
 
 	
@@ -341,7 +338,7 @@ public class Lambda {
 
 		// Import Plugins: Parsers, Reporting Engines, Connectors
 		// - This should enable filtering on input files etc.
-		logger.info("Running Lambda");
+		logger.debug("Running Lambda");
 
 		// Set paths to reporting
 
@@ -368,8 +365,11 @@ public class Lambda {
 					+ e.getMessage());
 		}
 		
-		// Import Plugins (Including the Selenium Plugin)
-		this.importPlugins();
+		// Import Plugins
+		//this.importPlugins();
+		
+		Assert.notNull(this.selenium, "Selenium must not be null");
+		this.assertionProviders.add(this.selenium);		
 
 		// Parse the tests
 		try {
@@ -384,24 +384,24 @@ public class Lambda {
 		}
 
 		
-		logger.info("Running non Testng Tests");
+		logger.debug("Running non Testng Tests");
 		for (Class<Test> clazz: tests) {
 			Test test = null;
 			try {
 				test = clazz.newInstance();
 			} catch (InstantiationException e) {
-				logger.info("Could not instantiate the Test class: " + e.getMessage());
+				logger.debug("Could not instantiate the Test class: " + e.getMessage());
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				logger.info("Could not instantiate the Test class: " + e.getMessage());
+				logger.debug("Could not instantiate the Test class: " + e.getMessage());
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			for (Method m: clazz.getMethods()) {
 				org.testng.annotations.Test testAnnotation = m.getAnnotation(org.testng.annotations.Test.class);
 				if (testAnnotation != null) {
-					logger.info("Runing test with name: " + m.getName());
+					logger.debug("Runing test with name: " + m.getName());
 					// Crap - how do we do variables? TestNG has @DataProviders, can we leverage this?
 					String dataProviderMethodName = testAnnotation.dataProvider();
 					if (dataProviderMethodName != null) {
@@ -413,23 +413,23 @@ public class Lambda {
 								m.invoke(test, array);
 							}
 						} catch (SecurityException e) {
-							logger.info("Could not instantiate the DataProvider method SE: " + e.getMessage());
+							logger.debug("Could not instantiate the DataProvider method SE: " + e.getMessage());
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (NoSuchMethodException e) {
-							logger.info("Could not instantiate the DataProvider method NSME: " + e.getMessage());
+							logger.debug("Could not instantiate the DataProvider method NSME: " + e.getMessage());
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IllegalArgumentException e) {
-							logger.info("Could not instantiate the Test class IAE: " + e.getMessage());
+							logger.debug("Could not instantiate the Test class IAE: " + e.getMessage());
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
-							logger.info("Could not instantiate the Test class IAE: " + e.getMessage());
+							logger.debug("Could not instantiate the Test class IAE: " + e.getMessage());
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (InvocationTargetException e) {
-							logger.info("Could not instantiate the Test class ITE: " + e.getMessage());
+							logger.debug("Could not instantiate the Test class ITE: " + e.getMessage());
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
@@ -439,7 +439,7 @@ public class Lambda {
 		}
 		// Create TestNG objects
 		/*
-		logger.info("Starting TestNG Instance");
+		logger.debug("Starting TestNG Instance");
 		this.testng = new TestNG();
 		testng.setVerbose(10);
 		TestListenerAdapter tla = new TestListenerAdapter();
@@ -448,7 +448,7 @@ public class Lambda {
 		testng.addListener(tla);
 
 		// Run the TestNG suite
-		logger.info("Running Tests");
+		logger.debug("Running Tests");
 		testng.run();
 */
 

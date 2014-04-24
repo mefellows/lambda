@@ -137,6 +137,7 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
 
 	        	// Create Test Class
 	        	String testCaseName = "Test" + Excel2SeleniumParser.toCamelCase(sheet.getSheetName());
+	        	logger.info("Found Test Case: " + testCaseName);
 	        	logger.debug("Creating Test class with name: " + testCaseName);
 	        	builder.makeTestClass(testCaseName, this.dataMap);
 	        	boolean testCaseInProgress = false;
@@ -246,20 +247,20 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
 			e.printStackTrace();
 		}
         
-        logger.info("Looking at our classes...");
+        logger.debug("Looking at our classes...");
         
         // Look at the Test Objects
         for (Class<Test> clazz: tests) {
-        	logger.info("Class: " + clazz.getName());
+        	logger.debug("Class: " + clazz.getName());
         	for (Method m : clazz.getMethods()) {
-        		logger.info("Method: " + m);
+        		logger.debug("Method: " + m);
         		if (m.getName().equalsIgnoreCase("testRetailDataProvider")) {
-        			logger.info("invoking data provider");
+        			logger.debug("invoking data provider");
         			Test test = clazz.newInstance();
         			Object[][] data = (Object[][]) m.invoke(test);
         			for (Object[] obs: data) {
         				for (Object o: obs) {
-        					logger.info("data value: " + o);
+        					logger.debug("data value: " + o);
         				}        				
         			}
         		}
@@ -273,34 +274,34 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
 			this.parse(stream);
 		} catch (CannotCompileException e) {
 			// TODO Auto-generated catch block
-			logger.info("cce e dataMap");
+			logger.debug("cce e dataMap");
 			e.printStackTrace();
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
-			logger.info("nfe e dataMap");
+			logger.debug("nfe e dataMap");
 			e.printStackTrace();
 		} catch (CannotCreateTestClassException e) {
-			logger.info("cctc e dataMap");
+			logger.debug("cctc e dataMap");
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			logger.info("illa e dataMap");
+			logger.debug("illa e dataMap");
 			e.printStackTrace();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
-			logger.info("ia e dataMap");
+			logger.debug("ia e dataMap");
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
-			logger.info("iae e dataMap");
+			logger.debug("iae e dataMap");
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
-			logger.info("invocation e dataMap");
+			logger.debug("invocation e dataMap");
 			e.printStackTrace();
 		}
 		
-		logger.info("returning tests...");
+		logger.debug("returning tests...");
         return this.tests.toArray(new Class[this.tests.size()]);
 	}
 
@@ -310,34 +311,34 @@ public class Excel2SeleniumParser implements TestProvider, DataProvider, Plugin 
 			this.parse(stream);
 		} catch (CannotCompileException e) {
 			// TODO Auto-generated catch block
-			logger.info("cce e dataMap");
+			logger.debug("cce e dataMap");
 			e.printStackTrace();
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
-			logger.info("nfe e dataMap");
+			logger.debug("nfe e dataMap");
 			e.printStackTrace();
 		} catch (CannotCreateTestClassException e) {
-			logger.info("cctc e dataMap");
+			logger.debug("cctc e dataMap");
 			e.printStackTrace();			
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			logger.info("illa e dataMap");
+			logger.debug("illa e dataMap");
 			e.printStackTrace();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
-			logger.info("ia e dataMap");
+			logger.debug("ia e dataMap");
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
-			logger.info("iae e dataMap");
+			logger.debug("iae e dataMap");
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
-			logger.info("invocation e dataMap");
+			logger.debug("invocation e dataMap");
 			e.printStackTrace();
 		}
 		
-		logger.info("Returning dataMap");
+		logger.debug("Returning dataMap");
 		for (Map<String, Object> map: this.dataMap) {
 			Iterator<String> i = map.keySet().iterator();
 			while(i.hasNext()) {

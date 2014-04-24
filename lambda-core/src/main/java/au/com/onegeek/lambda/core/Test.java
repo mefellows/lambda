@@ -49,18 +49,18 @@ public abstract class Test implements au.com.onegeek.lambda.api.Test {
 //	public Test() throws InterruptedException {
 //		runner = CommandRunner.getInstance();
 		
-//		logger.info("********* CommandRunner: About to load spring context");
+//		logger.debug("********* CommandRunner: About to load spring context");
 //		Thread.sleep(1000);
 //		ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/lambda-context.xml");
 //		this.runner = context.getBean(CommandRunner.class);
 //		Lambda lambda = context.getBean(Lambda.class);
 //		lambda.init();
-//		logger.info("********* CommandRunner: About to check if runner is null ");
+//		logger.debug("********* CommandRunner: About to check if runner is null ");
 //		Thread.sleep(1000);
 		
 //		Assert.notNull(this.runner, "Runner has not been Autowired");
 //		
-//		logger.info("runner is null?" + (runner == null));
+//		logger.debug("runner is null?" + (runner == null));
 //	}
 	
 	/**
@@ -70,7 +70,7 @@ public abstract class Test implements au.com.onegeek.lambda.api.Test {
 	 * @param params The set of parameters to pass in.
 	 */
 	public void executeCommand(String keyword, Object...params) {
-		logger.info("Running command: " + keyword);
+		logger.debug("Running command: " + keyword);
 		TestCommand command = new TestCommand(keyword, params);
 		runner.runCommand(command);
 	}
@@ -84,7 +84,7 @@ public abstract class Test implements au.com.onegeek.lambda.api.Test {
 	 */
 	public void executeCommand(String keyword) {
 		TestCommand command = new TestCommand(keyword);
-		logger.info("Running command: " + keyword);
+		logger.debug("Running command: " + keyword);
 		runner.runCommand(command);
 	}
 }

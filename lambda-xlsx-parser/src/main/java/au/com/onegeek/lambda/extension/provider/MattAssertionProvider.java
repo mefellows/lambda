@@ -45,12 +45,12 @@ public class MattAssertionProvider implements AssertionProvider {
 	@Override
 	public void start(Context context) {
 		// TODO Auto-generated method stub
-		logger.info("starting Matt's Assertion Provider...");
+		logger.debug("starting Matt's Assertion Provider...");
 		this.driver = context.getDriver();
 	}
 	
 	public void matt(String message) {
-		logger.info("Called Matt method!");
+		logger.debug("Called Matt method!");
 		String source = this.driver.getPageSource();
 		
 		Assert.isTrue(source.contains(message), "'" + message + "' was not found to be awesome in the DOM Source");

@@ -34,7 +34,7 @@
             <groupId>au.com.onegeek</groupId>
             <artifactId>lambda-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>   
   </dependencies>
   
     <build>

@@ -78,7 +78,7 @@ public class BrowserFactoryTest {
 		
 		
 		//selenium.open("http://ote.retail.melbourneit.com.au");
-		//logger.info(selenium.getHtmlSource());
+		//logger.debug(selenium.getHtmlSource());
 //		WebElement nameid = driver.findElement(By.id("nameid"));
 //		nameid.sendKeys("hello.com.au");
 //		nameid.submit();

@@ -59,7 +59,7 @@ public class CommandRunner {
 
 //	private CommandRunner() {
 		private void init() {		
-			logger.info("Lambda is null?" + (lambda == null));
+			logger.debug("Lambda is null?" + (lambda == null));
 	}
 
 	
@@ -117,14 +117,14 @@ public class CommandRunner {
     		logger.debug("Argument class: " + argTypes[k]);
     	}
 
-    	logger.info("looking for providers...");
+    	logger.debug("looking for providers...");
     	
         // Find the implementing class of the method
     	for(Object provider : this.lambda.getAssertionProviders()) {
 	    	try {
-	    		logger.info("getting method....");
+	    		logger.debug("getting method....");
 	    		method = provider.getClass().getMethod(keyword, argTypes);
-	    		logger.info("got one!");
+	    		logger.debug("got one!");
 	    		object = provider;
 	        } catch (SecurityException e) {
 	        	logger.debug("Not allowed to call method " + keyword + " from Provider <" + provider.getClass().getName() + "> ");
@@ -136,7 +136,7 @@ public class CommandRunner {
 	        }
     	}
     	
-    	logger.info("Checknig if we found a provider");
+    	logger.debug("Checknig if we found a provider");
     	
     	if (object == null) {
     		logger.error("cannot find provider of method " + keyword);
@@ -148,7 +148,7 @@ public class CommandRunner {
     	// Invoke method
         Object result = "not set";
         try {
-        	logger.info("Invoking method '" + keyword + "' on object");
+        	logger.debug("Invoking method '" + keyword + "' on object");
         	result = method.invoke(object, testCommand.getParameters());
         } catch (IllegalArgumentException e) {
         	fail("Method '" + keyword + "' illegal argument exception: " + e.getMessage());

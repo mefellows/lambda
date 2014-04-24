@@ -176,9 +176,9 @@ public class JavassistTestBuilderImpl {
 	}
 	
 	private void completeMethod() throws CannotModifyTestMethodException, CannotCompileException, NotFoundException {
-		logger.info("completing any in flight methods...");
+		logger.debug("completing any in flight methods...");
 		if (this.ctMethod != null) {
-			logger.info("completing in flight method: " + this.ctMethod.getName());
+			logger.debug("completing in flight method: " + this.ctMethod.getName());
 			
 			// Update method signature
 			for (Class type: signatureTypes) {
@@ -283,7 +283,7 @@ public class JavassistTestBuilderImpl {
 		String commandString = this.implodeCommandString(command);
 
 		// Add tests to method en-mass
-		logger.info("Adding command body: '" + commandString + "' to list of commands to append to test method body");
+		logger.debug("Adding command body: '" + commandString + "' to list of commands to append to test method body");
 		this.commandsToAdd.add(commandString);
 	}
 	
@@ -574,14 +574,7 @@ public class JavassistTestBuilderImpl {
 		}
 		try {
 			this.clazz = this.ctClass.toClass();
-			ctMethod = null;			
-			methodVariableToParameterMap = new LinkedHashMap<String, Object>();
-			signatureTypes = new LinkedList<Class>();
-			commandsToAdd = new LinkedList<String>();
-			
-			Class<Test> retClazz = clazz;
-			this.clazz = null;
-			return retClazz;
+			return clazz;
 		} catch (CannotCompileException e) {
 			e.printStackTrace();
 			throw new CannotCreateTestClassException("Cannot compile test class using Jassist. Embedded exception: " + e.getMessage());

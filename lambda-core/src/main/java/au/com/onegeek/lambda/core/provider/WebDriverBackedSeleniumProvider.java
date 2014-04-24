@@ -93,7 +93,7 @@ public class WebDriverBackedSeleniumProvider extends WebDriverBackedSelenium imp
 
 	@Override
 	public void start(Context context) {
-		logger.info("Starting Plugin: " + this.getClass().getName());
+		logger.debug("Starting Plugin: " + this.getClass().getName());
 	}
 
 	/* (non-Javadoc)
@@ -115,7 +115,7 @@ public class WebDriverBackedSeleniumProvider extends WebDriverBackedSelenium imp
 	    BeanDefinition definition = new RootBeanDefinition(
 	    		WebDriverBackedSeleniumProvider.class);
 
-	    logger.info("registering SeleniumBackedWebDriver bean...");
+	    logger.debug("registering SeleniumBackedWebDriver bean...");
 	    registry.registerBeanDefinition("webDriverBackedSeleniumProvider", definition);		
 	}	
 }

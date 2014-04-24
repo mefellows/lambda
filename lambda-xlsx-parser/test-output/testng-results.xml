@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="47469" started-at="2012-06-01T13:12:06Z" finished-at="2012-06-01T13:12:54Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="47469" started-at="2012-06-01T13:12:06Z" finished-at="2012-06-01T13:12:54Z">
+      <class name="au.com.onegeek.lambda.parser.XlsxImportTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:au.com.onegeek.lambda.parser.XlsxImportTest@15e232b5]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="6" started-at="2012-06-01T13:12:06Z" finished-at="2012-06-01T13:12:06Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:au.com.onegeek.lambda.parser.XlsxImportTest@15e232b5]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="2090" started-at="2012-06-01T13:12:06Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2012-06-01T13:12:08Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:au.com.onegeek.lambda.parser.XlsxImportTest@15e232b5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="4" started-at="2012-06-01T13:12:08Z" finished-at="2012-06-01T13:12:08Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void au.com.onegeek.lambda.parser.XlsxImportTest.testXlsxData() throws au.com.onegeek.lambda.api.exception.UnableToParseTestsException,au.com.onegeek.lambda.api.exception.UnableToParseDataException,java.io.IOException,au.com.onegeek.lambda.core.exception.ProviderNotFoundException]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="testXlsxData()[pri:0, instance:au.com.onegeek.lambda.parser.XlsxImportTest@15e232b5]" name="testXlsxData" duration-ms="45353" started-at="2012-06-01T13:12:08Z" finished-at="2012-06-01T13:12:54Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:au.com.onegeek.lambda.parser.XlsxImportTest@15e232b5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2012-06-01T13:12:54Z" finished-at="2012-06-01T13:12:54Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void au.com.onegeek.lambda.parser.XlsxImportTest.testXlsxData() throws au.com.onegeek.lambda.api.exception.UnableToParseTestsException,au.com.onegeek.lambda.api.exception.UnableToParseDataException,java.io.IOException,au.com.onegeek.lambda.core.exception.ProviderNotFoundException]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:au.com.onegeek.lambda.parser.XlsxImportTest@15e232b5]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2012-06-01T13:12:54Z" finished-at="2012-06-01T13:12:54Z">
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>

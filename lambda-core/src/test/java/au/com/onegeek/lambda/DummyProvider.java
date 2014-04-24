@@ -96,7 +96,7 @@ public class DummyProvider implements Plugin, TestProvider, DataProvider {
 	 */
 	@Override
 	public void start(Context context) {
-		logger.info("starting DummyProvider");
+		logger.debug("starting DummyProvider");
 	}
 
 }

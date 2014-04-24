@@ -45,14 +45,14 @@ public class PluginLoader {
 	 * @return List of Plugin instances.
 	 */
 	public static List<Plugin> loadPlugins(ClassLoader cl) {
-		logger.info("Loading Plugins...");
+		logger.debug("Loading Plugins...");
 		ServiceLoader<Plugin> pluginClasses = ServiceLoader.load(Plugin.class, cl);
 		List<Plugin> plugins = new ArrayList<Plugin>();
 		for (Plugin p : pluginClasses) {
-			logger.info("Loading Plugin with name: " + p.getClass().getName());
+			logger.debug("Loading Plugin with name: " + p.getClass().getName());
 			plugins.add(p);
 		}
-		logger.info(plugins.size() + " plugins found...");
+		logger.debug(plugins.size() + " plugins found...");
 		return plugins;
 	}
 
@@ -95,7 +95,7 @@ public class PluginLoader {
 
 			for (int j = 0; j < files.length; j++) {
 				URL url = files[j].toURI().toURL();
-				logger.info("Added file {0} to classpath.", url);
+				logger.debug("Added file {0} to classpath.", url);
 				classpath.add(url);
 			}
 		}
